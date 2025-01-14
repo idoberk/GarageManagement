@@ -1,11 +1,10 @@
-﻿using System;
-
+﻿
 namespace Ex03.GarageLogic
 {
-    public class Engine
+    public abstract class Engine
     {
         private float m_MaxEnergyCapacity;
-        private float m_CurrentEnergyAmount; 
+        private float m_CurrentEnergyAmount;
         private eEngineType m_EngineType;
 
         public float MaxEnergyCapacity
@@ -20,18 +19,18 @@ namespace Ex03.GarageLogic
             set { m_CurrentEnergyAmount = value; }
         }
 
-        public enum eEngineType
+        public eEngineType EngineType
         {
-            FuelEngine, 
-            ElctricEngine
+            get { return m_EngineType; }
+            set { m_EngineType = value; }
         }
 
-        if(input == FuelEngine)
-            {
-                m_EngineType = FuelEngine;
-    }
+        public enum eEngineType
+        {
+            Fuel,
+            Electric
+        }
 
-
-
+        //protected abstract void MaxCapacity(string i_VehicleType);
     }
 }

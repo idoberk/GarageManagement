@@ -1,12 +1,16 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using static Ex03.GarageLogic.Engine;
 
 namespace Ex03.GarageLogic
 {
     public class Motorcycle : Vehicle
     {
-        private readonly int m_NumOfWheels = 2;
+        private readonly int r_NumOfWheels = 2;
         private eLicenseType m_LicenseType;
         private int m_EngineVolume;
+
+        protected override List<Engine.eEngineType> SupportedEngineTypes { get; } = new List<Engine.eEngineType>
+                                                                               {Engine.eEngineType.Fuel, Engine.eEngineType.Electric};
 
         public enum eLicenseType
         {
@@ -28,11 +32,14 @@ namespace Ex03.GarageLogic
             set { m_EngineVolume = value; }
         }
 
-        public Motorcycle(string i_ModelName, string i_LicensePlate)
+        public Motorcycle(string i_LicensePlate, string i_ModelName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
         {
-            //foreach Wheel in
-            //    Wheels.add(manufacturer, Wheel.eMaxTireAirPressure.Motorcycle)
-        
+            return;
+        }
+
+        public override string ToString()
+        {
+            return string.Format($"{VehicleInformation()}, {EngineVolume}, {LicenseType}");
         }
     }
 }
