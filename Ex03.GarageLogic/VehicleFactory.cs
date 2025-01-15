@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using static Ex03.GarageLogic.Engine;
 
 namespace Ex03.GarageLogic
@@ -38,7 +37,7 @@ namespace Ex03.GarageLogic
         //    return supportEngineTypes;
         //}
 
-        public static Vehicle CreateVehicle(string i_LicensePlate, string i_VehicleModelName, string i_ManufacturerName, eVehicleType i_VehicleType, eEngineType i_IsFuelEngine) 
+        internal static Vehicle CreateVehicle(string i_LicensePlate, string i_VehicleModelName, string i_ManufacturerName, eVehicleType i_VehicleType, eEngineType i_EngineType) 
         {
             Vehicle vehicle = null;
             //Engine engine = null;
@@ -52,15 +51,15 @@ namespace Ex03.GarageLogic
             {
                 case eVehicleType.Car:
                     
-                    vehicle = new Car(i_LicensePlate, i_VehicleModelName, i_ManufacturerName, i_IsFuelEngine);
+                    vehicle = new Car(i_LicensePlate, i_VehicleModelName, i_ManufacturerName, i_EngineType);
                     break;
 
                 case eVehicleType.Motorcycle:
-                    vehicle = new Motorcycle(i_LicensePlate , i_VehicleModelName, i_IsFuelEngine);
+                    vehicle = new Motorcycle(i_LicensePlate , i_VehicleModelName, i_EngineType);
                     break;
 
                 case eVehicleType.Truck:
-                    vehicle = new Truck(i_LicensePlate, i_VehicleModelName, i_IsFuelEngine);
+                    vehicle = new Truck(i_LicensePlate, i_VehicleModelName, i_EngineType);
                     break;
             }
 

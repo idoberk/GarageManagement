@@ -4,7 +4,7 @@ using static Ex03.GarageLogic.Engine;
 
 namespace Ex03.GarageLogic
 {
-    public abstract class Vehicle
+    internal abstract class Vehicle
     {
         private string m_LicensePlate;
         private string m_ModelName;
@@ -20,25 +20,25 @@ namespace Ex03.GarageLogic
             set { m_ModelName = value; }
         }
 
-        public string LicensePlate
+        internal string LicensePlate
         {
             get { return m_LicensePlate; }
             set { m_LicensePlate = value; }
         }
 
-        public float EnergyPercentage
+        internal float EnergyPercentage
         {
             get { return m_EnergyPercentage; }
             set { m_EnergyPercentage = value; }
         }
 
-        public Engine Engine
+        internal Engine Engine
         {
             get { return m_Engine; }
             set { m_Engine = value; }
         }
 
-        public List<Wheel> Wheels
+        internal List<Wheel> Wheels
         {
             get { return m_Wheels; }
             set { m_Wheels = value; }
@@ -50,7 +50,7 @@ namespace Ex03.GarageLogic
         //    set { m_VehicleType = value; }
         //}
 
-        public Vehicle(string i_LicensePlate, string i_VehicleModelName, eEngineType i_Engine)
+        internal Vehicle(string i_LicensePlate, string i_VehicleModelName, eEngineType i_Engine)
         {
             if (!SupportedEngineTypes.Contains(i_Engine))
             {
@@ -77,5 +77,7 @@ Model name: {1}", m_LicensePlate, m_ModelName); // add  owner name + status , wh
             
             return vehicleInfo;
         }
+
+        //internal abstract void SetVehicleProperties();
     }
 }

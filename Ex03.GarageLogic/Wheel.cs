@@ -1,6 +1,6 @@
 ﻿namespace Ex03.GarageLogic
 {
-    public class Wheel
+    internal class Wheel
     {
         private string m_ManufacturerName;
         private float m_CurrentTireAirPressure;
@@ -13,31 +13,31 @@
             Car = 34
         }
 
-        public string ManufacturerName
+        internal string ManufacturerName
         {
             get { return m_ManufacturerName; }
             set { m_ManufacturerName = value; }
         }
 
-        public float CurrentTireAirPressure
+        internal float CurrentTireAirPressure
         {
             get { return m_CurrentTireAirPressure; }
             set { m_CurrentTireAirPressure = value; }
         }
 
-        public float MaxTireAirPressure
+        internal float MaxTireAirPressure
         {
             get { return m_MaxTireAirPressure; }
             set { m_MaxTireAirPressure = value; }
         }
 
-        public Wheel(string i_ManufacturerName, float i_MaxTireAirPressure)
+        internal Wheel(string i_ManufacturerName, float i_MaxTireAirPressure)
         {
             ManufacturerName = i_ManufacturerName;
             MaxTireAirPressure = i_MaxTireAirPressure;       
         }
-        
-        public void InflateWheel(float i_AddAirPressure)
+
+        internal void InflateWheel(float i_AddAirPressure)
         {
             if(m_CurrentTireAirPressure + i_AddAirPressure > m_MaxTireAirPressure || m_CurrentTireAirPressure + i_AddAirPressure < 0)
             {

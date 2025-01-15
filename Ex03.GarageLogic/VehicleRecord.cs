@@ -2,7 +2,7 @@
 
 namespace Ex03.GarageLogic
 {
-    public class VehicleRecord
+    internal class VehicleRecord
     {
         private string m_VehicleOwnerName;
         private string m_PhoneOwner;
@@ -11,9 +11,9 @@ namespace Ex03.GarageLogic
 
         public enum eVehicleStatus
         {
-            BeingTreated,
-            TreatmentComplete,
-            TreatmentPaid
+            BeingRepaired = 1,
+            RepairComplete,
+            RepairPaid
         }
 
         public string VehicleOwnerName
@@ -34,13 +34,13 @@ namespace Ex03.GarageLogic
             set { m_VehicleStatus = value; }
         }
 
-        public Vehicle Vehicle
+        internal Vehicle Vehicle
         {
             get { return m_Vehicle; }
             set { m_Vehicle = value; }
         }
 
-        public VehicleRecord(Vehicle i_VehicleToAdd, string i_Name, string i_PhoneOwner)
+        internal VehicleRecord(Vehicle i_VehicleToAdd, string i_Name, string i_PhoneOwner)
         {
             VehicleOwnerName = i_Name;
             PhoneOwner = i_PhoneOwner;

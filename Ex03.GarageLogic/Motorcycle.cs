@@ -3,14 +3,14 @@ using static Ex03.GarageLogic.Engine;
 
 namespace Ex03.GarageLogic
 {
-    public class Motorcycle : Vehicle
+    internal class Motorcycle : Vehicle
     {
         private readonly int r_NumOfWheels = 2;
         private eLicenseType m_LicenseType;
         private int m_EngineVolume;
 
-        protected override List<Engine.eEngineType> SupportedEngineTypes { get; } = new List<Engine.eEngineType>
-                                                                               {Engine.eEngineType.Fuel, Engine.eEngineType.Electric};
+        protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType>
+                                                                               {eEngineType.Fuel, eEngineType.Electric};
 
         public enum eLicenseType
         {
@@ -20,19 +20,19 @@ namespace Ex03.GarageLogic
             B2
         }
 
-        public eLicenseType LicenseType
+        internal eLicenseType LicenseType
         {
             get { return m_LicenseType; }
             set { m_LicenseType = value; }
         }
 
-        public int EngineVolume
+        internal int EngineVolume
         {
             get { return m_EngineVolume; }
             set { m_EngineVolume = value; }
         }
 
-        public Motorcycle(string i_LicensePlate, string i_ModelName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
+        internal Motorcycle(string i_LicensePlate, string i_ModelName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
         {
             return;
         }

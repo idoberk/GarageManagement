@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Text;
+using System.Collections.Generic;
+using static Ex03.GarageLogic.Car;
 using static Ex03.GarageLogic.Engine;
 
 namespace Ex03.GarageLogic
 {
-    public class Truck : Vehicle
+    internal class Truck : Vehicle
     {
         private readonly int r_NumOfWheels = 14;
         private float m_CargoVolume;
@@ -12,19 +14,19 @@ namespace Ex03.GarageLogic
         protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType>
                                                                                {eEngineType.Fuel};
 
-        public float CargoVolume
+        internal float CargoVolume
         {
             get { return m_CargoVolume; }
             set { m_CargoVolume = value; }
         }
 
-        public bool IsCargoCooled
+        internal bool IsCargoCooled
         {
             get { return m_IsCargoCooled; }
             set { m_IsCargoCooled = value; }
         }
 
-        public Truck(string i_LicensePlate, string i_ModelName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
+        internal Truck(string i_LicensePlate, string i_ModelName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
         {
             return;
         }
@@ -33,5 +35,18 @@ namespace Ex03.GarageLogic
         {
             return string.Format($"{VehicleInformation()}, {CargoVolume}, {IsCargoCooled}");
         }
+
+        //internal static string GetCargoVolume()
+        //{
+        //    StringBuilder bla = new StringBuilder();
+
+        //    //foreach (eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
+        //    //{
+        //        colorOptions.AppendLine(string.Format("cargo Volume"));
+        //    //}
+        //    string bla = "Please enter "
+
+        //    return colorOptions.ToString();
+        //}
     }
 }
