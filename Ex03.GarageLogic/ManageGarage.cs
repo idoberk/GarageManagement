@@ -21,12 +21,15 @@ namespace Ex03.GarageLogic
             // Records[i_LicensePlate].VehicleStatus = i_DesiredStatus;
         }
 
-        public void CheckIfVehicleExists(string i_LicensePlate)
+        private bool isVehicleExists(string i_LicensePlate)
         {
-            if (!Records.ContainsKey(i_LicensePlate))
-            {
-                throw new ArgumentException($"Error occurred. {i_LicensePlate} doesn't exist in the system.");
-            }
+            bool isExists = Records.ContainsKey(i_LicensePlate);
+            //if (!Records.ContainsKey(i_LicensePlate))
+            //{
+            //    throw new ArgumentException($"Error occurred. {i_LicensePlate} doesn't exist in the system.");
+            //}
+
+            return isExists;
         }
 
         //public void AddVehicle(Vehicle i_VehicleToAdd, string i_Name, string i_PhoneOwner)
@@ -92,6 +95,38 @@ namespace Ex03.GarageLogic
             }
 
             return engineTypes.ToString();
+        }
+
+        public void InflateWheelsToMax(string i_VehicleLicensePlate)
+        {
+            float tireAirPressureToAdd = 0f;
+
+            if (isVehicleExists(i_VehicleLicensePlate))
+            {
+                List<Wheel> vehicleWheels = Records[i_VehicleLicensePlate].Vehicle.Wheels;
+                foreach (Wheel wheel in vehicleWheels)
+                {
+                    tireAirPressureToAdd = wheel.MaxTireAirPressure - wheel.CurrentTireAirPressure;
+                    wheel.InflateWheel(tireAirPressureToAdd);
+                }
+            }
+        }
+
+        public void FillTank(string i_VehicleLicensePlate)
+        {
+            float amountOfFuelToAdd = 0f;
+
+            if (isVehicleExists(i_VehicleLicensePlate))
+            {
+                Vehicle vehicle = Records[i_VehicleLicensePlate].Vehicle;
+
+                if (vehicle.Engine is FuelEngine fuelEngine)
+                {
+                    //eVehicleType vehicleType = VehicleFactory.GetVehicleType(vehicle);
+                    amountOfFuelToAdd = fuelEngine.MaxEnergyCapacity - fuelEngine.CurrentEnergyAmount;
+                    fuelEngine.Refuel(amountOfFuelToAdd, fuelEngine.FuelType);
+                }
+            }
         }
     }
 }

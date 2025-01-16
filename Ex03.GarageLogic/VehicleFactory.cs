@@ -55,16 +55,38 @@ namespace Ex03.GarageLogic
                     break;
 
                 case eVehicleType.Motorcycle:
-                    vehicle = new Motorcycle(i_LicensePlate , i_VehicleModelName, i_EngineType);
+                    vehicle = new Motorcycle(i_LicensePlate, i_VehicleModelName, i_ManufacturerName, i_EngineType);
                     break;
 
                 case eVehicleType.Truck:
-                    vehicle = new Truck(i_LicensePlate, i_VehicleModelName, i_EngineType);
+                    vehicle = new Truck(i_LicensePlate, i_VehicleModelName, i_ManufacturerName, i_EngineType);
                     break;
             }
 
             return vehicle;
         }
+
+        //internal static eVehicleType GetVehicleType(Vehicle i_Vehicle)
+        //{
+        //    eVehicleType vehicleType;
+
+        //    if (i_Vehicle is Car)
+        //    {
+        //        vehicleType = eVehicleType.Car;
+        //    } else if (i_Vehicle is Motorcycle)
+        //    {
+        //        vehicleType = eVehicleType.Motorcycle;
+        //    } else if (i_Vehicle is Truck)
+        //    {
+        //        vehicleType = eVehicleType.Truck;
+        //    }
+        //    else
+        //    {
+        //        throw new ArgumentException($"{i_Vehicle.GetType().Name} is not supported vehicle type");
+        //    }
+
+        //    return vehicleType;
+        //}
     }
 }
  

@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using static Ex03.GarageLogic.Car;
 using static Ex03.GarageLogic.Engine;
+using static Ex03.GarageLogic.Wheel;
 
 namespace Ex03.GarageLogic
 {
@@ -9,8 +12,11 @@ namespace Ex03.GarageLogic
         private eLicenseType m_LicenseType;
         private int m_EngineVolume;
 
-        protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType>
-                                                                               {eEngineType.Fuel, eEngineType.Electric};
+        protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType> 
+        {eEngineType.Fuel, eEngineType.Electric};
+
+        protected override Dictionary<eEngineType, float> MaxTankCapacity { get; } = new Dictionary<eEngineType, float>()
+        { { eEngineType.Fuel, 6.2f }, { eEngineType.Electric, 2.9f } };
 
         public enum eLicenseType
         {
@@ -23,18 +29,48 @@ namespace Ex03.GarageLogic
         internal eLicenseType LicenseType
         {
             get { return m_LicenseType; }
-            set { m_LicenseType = value; }
+            set
+            {
+                if (Enum.IsDefined(typeof(eLicenseType), value))
+                {
+                    m_LicenseType = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid license type input");
+                }
+            }
         }
 
         internal int EngineVolume
         {
             get { return m_EngineVolume; }
-            set { m_EngineVolume = value; }
+            set
+            {
+                if (value >= 0)
+                {
+                    m_EngineVolume = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Motorcycle's engine capacity cannot be negative");
+                }
+            }
         }
 
-        internal Motorcycle(string i_LicensePlate, string i_ModelName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
+        internal Motorcycle(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
         {
-            return;
+            for (int i = 0; i < r_NumOfWheels; i++)
+            {
+                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
+            }
+
+            Initialize(i_Engine);
+
+            if (i_Engine is eEngineType.Fuel)
+            {
+                ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Octan98;
+            }
         }
 
         public override string ToString()

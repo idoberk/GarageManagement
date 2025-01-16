@@ -13,6 +13,8 @@ namespace Ex03.GarageLogic
         private List<Wheel> m_Wheels;
         // private eVehicleType m_VehicleType;
         protected abstract List<eEngineType> SupportedEngineTypes { get; }
+        protected abstract Dictionary<eEngineType, float> MaxTankCapacity { get; }
+
 
         public string ModelName
         {
@@ -52,13 +54,18 @@ namespace Ex03.GarageLogic
 
         internal Vehicle(string i_LicensePlate, string i_VehicleModelName, eEngineType i_Engine)
         {
-            if (!SupportedEngineTypes.Contains(i_Engine))
-            {
-                throw new ArgumentException($"{i_Engine} is not supported for {this.GetType().Name}.");
-            }
-
             LicensePlate = i_LicensePlate;
             ModelName = i_VehicleModelName;
+            Wheels = new List<Wheel>();
+        }
+
+        internal void Initialize(eEngineType i_Engine)
+        {
+            if (!SupportedEngineTypes.Contains(i_Engine))
+            {
+                throw new ArgumentException($"{i_Engine} engine is not supported for {this.GetType().Name}.");
+            }
+
             if (i_Engine == eEngineType.Fuel)
             {
                 Engine = new FuelEngine();
@@ -67,7 +74,11 @@ namespace Ex03.GarageLogic
             {
                 Engine = new ElectricEngine();
             }
-            Wheels = new List<Wheel>();
+
+            if (MaxTankCapacity.ContainsKey(i_Engine))
+            {
+                Engine.MaxEnergyCapacity = MaxTankCapacity[i_Engine];
+            }
         }
 
         public string VehicleInformation()

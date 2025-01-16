@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using static Ex03.GarageLogic.Car;
 using static Ex03.GarageLogic.Engine;
+using static Ex03.GarageLogic.Wheel;
+using static Ex03.GarageLogic.Motorcycle;
+using System;
 
 namespace Ex03.GarageLogic
 {
@@ -14,10 +17,23 @@ namespace Ex03.GarageLogic
         protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType>
                                                                                {eEngineType.Fuel};
 
+        protected override Dictionary<eEngineType, float> MaxTankCapacity { get; } = new Dictionary<eEngineType, float>()
+        { { eEngineType.Fuel, 125f } };
+
         internal float CargoVolume
         {
             get { return m_CargoVolume; }
-            set { m_CargoVolume = value; }
+            set
+            {
+                if (value >= 0)
+                {
+                    m_CargoVolume = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Truck's cargo volume cannot be negative");
+                }
+            }
         }
 
         internal bool IsCargoCooled
@@ -26,9 +42,19 @@ namespace Ex03.GarageLogic
             set { m_IsCargoCooled = value; }
         }
 
-        internal Truck(string i_LicensePlate, string i_ModelName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
+        internal Truck(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
         {
-            return;
+            for (int i = 0; i < r_NumOfWheels; i++)
+            {
+                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
+            }
+
+            Initialize(i_Engine);
+
+            if (i_Engine is eEngineType.Fuel)
+            {
+                ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Soler;
+            }
         }
 
         public override string ToString()

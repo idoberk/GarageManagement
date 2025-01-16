@@ -153,7 +153,7 @@ namespace Ex03.ConsoleUI
             getVehicleType(out int vehicleType);
             getEngineType(out int engineType);
             garage.AddVehicle(vehicleType, engineType, ownerName, ownerPhoneNumber, licensePlateInput);
-
+            // garage.FillTank(licensePlateInput);
             getVehicleProperties(vehicleType, licensePlateInput);
 
         }
@@ -189,17 +189,7 @@ namespace Ex03.ConsoleUI
 
         private void getVehicleProperties(int i_VehicleType, string i_LicensePlate)
         {
-            //entermodelname
-            //    enterwheelmanuname
-            //        enterfuelamount
-            //            enterwheelairpressure
-
-
-            // { "Car Color": setColor  };
-            // print "please nter key;
-            // string bla = userinput;
-            // stringbuilder func = "methodName" + "(" + bla + ");";
-            //{ func }
+            
         }
     }
 }

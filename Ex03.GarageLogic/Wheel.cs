@@ -1,4 +1,6 @@
-﻿namespace Ex03.GarageLogic
+﻿using System;
+
+namespace Ex03.GarageLogic
 {
     internal class Wheel
     {
@@ -16,13 +18,33 @@
         internal string ManufacturerName
         {
             get { return m_ManufacturerName; }
-            set { m_ManufacturerName = value; }
+            set
+            {
+                if (value != string.Empty)
+                {
+                    m_ManufacturerName = value;
+                }
+                else
+                {
+                    throw new ArgumentException($"{value} is an invalid name");
+                }
+            }
         }
 
         internal float CurrentTireAirPressure
         {
             get { return m_CurrentTireAirPressure; }
-            set { m_CurrentTireAirPressure = value; }
+            set
+            {
+                if (value >= 0 && value <= MaxTireAirPressure)
+                {
+                    m_CurrentTireAirPressure = value;
+                }
+                else
+                {
+                    throw new ArgumentException($"Current tire air pressure cannot be negative or exceed {MaxTireAirPressure}");
+                }
+            }
         }
 
         internal float MaxTireAirPressure

@@ -18,8 +18,8 @@ namespace Ex03.GarageLogic
         protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType>
                                                                                {eEngineType.Fuel, eEngineType.Electric};
 
-        private Dictionary<eEngineType, float> m_TankCapacity = new Dictionary<eEngineType, float>()
-        { { eEngineType.Fuel, 5.4f }, { eEngineType.Electric, 2.9f } };
+        protected override Dictionary<eEngineType, float> MaxTankCapacity { get; } = new Dictionary<eEngineType, float>()
+        { { eEngineType.Fuel, 52f }, { eEngineType.Electric, 5.4f } };
 
         //private Dictionary<string, object> m_Properties = new Dictionary<string, object>()
         //{ { "car color", CarColor } };
@@ -44,13 +44,33 @@ namespace Ex03.GarageLogic
         internal eCarColor CarColor
         {
             get { return m_CarColor; }
-            set { m_CarColor = value; }
+            set
+            {
+                if (Enum.IsDefined(typeof(eCarColor), value))
+                {
+                    m_CarColor = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid color input");
+                }
+            }
         }
 
         internal eNumOfDoors NumOfDoors
         {
             get { return m_NumOfDoors; }
-            set { m_NumOfDoors = value; }
+            set
+            {
+                if (Enum.IsDefined(typeof(eNumOfDoors), value))
+                {
+                    m_NumOfDoors = value;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid doors input");
+                }
+            }
         }
 
         internal Car(string i_LicensePlate, string i_ModelName, string i_ManufacturerName ,eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
@@ -61,24 +81,12 @@ namespace Ex03.GarageLogic
                 Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
             }
 
-            if (m_TankCapacity.ContainsKey(i_Engine))
+            Initialize(i_Engine);
+
+            if (i_Engine is eEngineType.Fuel)
             {
-                Engine.MaxEnergyCapacity = m_TankCapacity[i_Engine];
+                ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Octan95;
             }
-
-
-
-            //if (i_Engine is FuelEngine)
-            //{
-            //    ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Octan95;
-            //    Engine.MaxEnergyCapacity = fuelEngine.TankCapacity["Car"];
-            //}
-            //else if (Engine is ElectricEngine electricEngine)
-            //{
-            //    Engine.MaxEnergyCapacity = electricEngine.TankCapacity["Car"];
-            //}
-
-            return;
         }
 
         internal void SetCarColor(string i_CarColor) 
