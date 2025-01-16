@@ -59,11 +59,11 @@ namespace Ex03.GarageLogic
             Wheels = new List<Wheel>();
         }
 
-        internal void Initialize(eEngineType i_Engine)
+        internal void InitializeVehicleEngine(eEngineType i_Engine)
         {
             if (!SupportedEngineTypes.Contains(i_Engine))
             {
-                throw new ArgumentException($"{i_Engine} engine is not supported for {this.GetType().Name}.");
+                throw new ArgumentException($"{i_Engine} engine is not supported for {GetType().Name}.");
             }
 
             if (i_Engine == eEngineType.Fuel)
@@ -79,6 +79,8 @@ namespace Ex03.GarageLogic
             {
                 Engine.MaxEnergyCapacity = MaxTankCapacity[i_Engine];
             }
+
+            Engine.EngineType = i_Engine;
         }
 
         public string VehicleInformation()

@@ -1,13 +1,11 @@
-﻿using System.Text;
+﻿using System;
 using System.Collections.Generic;
-using static Ex03.GarageLogic.Car;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
-using static Ex03.GarageLogic.Motorcycle;
-using System;
 
 namespace Ex03.GarageLogic
 {
+    // TODO: Check type validation in the CargoVolume;
     internal class Truck : Vehicle
     {
         private readonly int r_NumOfWheels = 14;
@@ -49,7 +47,7 @@ namespace Ex03.GarageLogic
                 Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
             }
 
-            Initialize(i_Engine);
+            InitializeVehicleEngine(i_Engine);
 
             if (i_Engine is eEngineType.Fuel)
             {

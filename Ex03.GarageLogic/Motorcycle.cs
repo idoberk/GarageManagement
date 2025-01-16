@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using static Ex03.GarageLogic.Car;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
 
 namespace Ex03.GarageLogic
 {
+    // TODO: Check type validation in the Engine Volume;
+    // TODO: Check if it is possible to make the wheels and fuel type abstract methods in the constructor;
     internal class Motorcycle : Vehicle
     {
         private readonly int r_NumOfWheels = 2;
@@ -65,7 +66,7 @@ namespace Ex03.GarageLogic
                 Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
             }
 
-            Initialize(i_Engine);
+            InitializeVehicleEngine(i_Engine);
 
             if (i_Engine is eEngineType.Fuel)
             {

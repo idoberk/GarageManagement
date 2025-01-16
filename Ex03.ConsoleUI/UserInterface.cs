@@ -6,6 +6,7 @@ using static Ex03.GarageLogic.VehicleFactory;
 
 namespace Ex03.ConsoleUI
 {
+    // TODO: Remove parsing in the UI and do it in the ManageGarage;
     public class UserInterface
     {
         private readonly ManageGarage garage = new ManageGarage();
@@ -26,6 +27,10 @@ namespace Ex03.ConsoleUI
         {
             // createNewVehicle("hello", "Mazda", "Michelin");
             createNewVehicle();
+            rechargeVehicle();
+            // refuelVehicle();
+            // changeVehicleStatus();
+
             //printMainMenu();
 
             //string userInput = getUserInput();
@@ -154,7 +159,7 @@ namespace Ex03.ConsoleUI
             getEngineType(out int engineType);
             garage.AddVehicle(vehicleType, engineType, ownerName, ownerPhoneNumber, licensePlateInput);
             // garage.FillTank(licensePlateInput);
-            getVehicleProperties(vehicleType, licensePlateInput);
+            // getVehicleProperties(vehicleType, licensePlateInput);
 
         }
 
@@ -187,9 +192,38 @@ namespace Ex03.ConsoleUI
             int.TryParse(getUserInput(), out o_EngineType);
         }
 
-        private void getVehicleProperties(int i_VehicleType, string i_LicensePlate)
+        private void changeVehicleStatus()
         {
-            
+            getLicensePlate(out string licensePlate);
+            printPrompt("Please choose the new status of the vehicle: ");
+            printPrompt(garage.GetVehicleTreatmentStatusOptions());
+            string desiredStatus = getUserInput();
+            garage.ChangeVehicleStatus(licensePlate, desiredStatus);
         }
+
+        private void refuelVehicle()
+        {
+            getLicensePlate(out string licensePlate);
+            printPrompt("Please choose the type of fuel: ");
+            printPrompt(garage.GetFuelTypes());
+            string selectedFuelType = getUserInput();
+            printPrompt("Please enter the amount of fuel you would like to add: ");
+            string amountOfFuel = getUserInput();
+            garage.FillTank(licensePlate, selectedFuelType, amountOfFuel);
+
+        }
+
+        private void rechargeVehicle()
+        {
+            getLicensePlate(out string licensePlate);
+            printPrompt("Please enter the amount of minutes you would like to charge: ");
+            string minutesToCharge = getUserInput();
+            garage.RechargeBattery(licensePlate, minutesToCharge);
+        }
+
+        //private void getVehicleProperties(int i_VehicleType, string i_LicensePlate)
+        //{
+            
+        //}
     }
 }

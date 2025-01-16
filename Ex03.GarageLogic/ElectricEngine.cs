@@ -16,22 +16,12 @@ namespace Ex03.GarageLogic
 
         public void Recharge(float i_HoursToCharge)
         {
-            if (this.CurrentEnergyAmount + i_HoursToCharge > this.MaxEnergyCapacity || this.CurrentEnergyAmount + i_HoursToCharge < 0)
+            if (CurrentEnergyAmount + i_HoursToCharge > MaxEnergyCapacity || CurrentEnergyAmount + i_HoursToCharge < 0)
             {
-                throw new ValueOutOfRangeException(0, this.MaxEnergyCapacity);
+                throw new ValueOutOfRangeException(0, MaxEnergyCapacity);
             }
 
-            this.CurrentEnergyAmount += i_HoursToCharge;
+            CurrentEnergyAmount += i_HoursToCharge;
         }
-
-        //protected override void MaxCapacity(string i_VehicleType)
-        //{
-        //    if (EngineType == eEngineType.Electric)
-        //    {
-        //        this.MaxEnergyCapacity = TankCapacity[];
-        //    }
-        //}
-
-
     }
 }

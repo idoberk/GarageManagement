@@ -16,7 +16,7 @@ namespace Ex03.GarageLogic
 
         public enum eFuelType
         {
-            Octan95,
+            Octan95 = 1,
             Octan96,
             Octan98,
             Soler
@@ -46,23 +46,23 @@ namespace Ex03.GarageLogic
 
         public void Refuel(float i_FuelAmountToFill, eFuelType i_FuelType)
         {
-            if (this.CurrentEnergyAmount + i_FuelAmountToFill > this.MaxEnergyCapacity || this.CurrentEnergyAmount + i_FuelAmountToFill < 0)
+            if (CurrentEnergyAmount + i_FuelAmountToFill > MaxEnergyCapacity || CurrentEnergyAmount + i_FuelAmountToFill < 0)
             {
-                throw new ValueOutOfRangeException(0, this.MaxEnergyCapacity);
+                throw new ValueOutOfRangeException(0, MaxEnergyCapacity);
             }
-            else if (i_FuelType != FuelType)
-            {
-                throw new ArgumentException("Incorrect fuel type.");
-            }
+            //else if (i_FuelType != FuelType)
+            //{
+            //    throw new ArgumentException("Incorrect fuel type.");
+            //}
 
-            this.CurrentEnergyAmount += i_FuelAmountToFill;
+            CurrentEnergyAmount += i_FuelAmountToFill;
         }
 
         //protected override void MaxCapacity()
         //{
         //    if (EngineType == eEngineType.Fuel)
         //    {
-        //        this.MaxEnergyCapacity = TankCapacity["Car"];
+        //        MaxEnergyCapacity = TankCapacity["Car"];
         //    }
         //}
     }

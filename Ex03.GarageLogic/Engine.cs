@@ -1,5 +1,4 @@
-﻿
-namespace Ex03.GarageLogic
+﻿namespace Ex03.GarageLogic
 {
     public abstract class Engine
     {
@@ -30,7 +29,5 @@ namespace Ex03.GarageLogic
             Fuel = 1,
             Electric
         }
-
-        //protected abstract void MaxCapacity(string i_VehicleType);
     }
 }

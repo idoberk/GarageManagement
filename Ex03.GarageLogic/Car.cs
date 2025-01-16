@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
+using System.Collections.Generic;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
 
@@ -75,13 +75,12 @@ namespace Ex03.GarageLogic
 
         internal Car(string i_LicensePlate, string i_ModelName, string i_ManufacturerName ,eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
         {
-
             for (int i = 0; i < r_NumOfWheels; i++)
             {
                 Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
             }
 
-            Initialize(i_Engine);
+            InitializeVehicleEngine(i_Engine);
 
             if (i_Engine is eEngineType.Fuel)
             {

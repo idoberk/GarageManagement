@@ -2,7 +2,8 @@
 
 namespace Ex03.GarageLogic
 {
-    internal class VehicleRecord
+    // TODO: Check option of moving eVehicleStatus to a standalone enum file;
+    public class VehicleRecord
     {
         private string m_VehicleOwnerName;
         private string m_PhoneOwner;
@@ -15,6 +16,12 @@ namespace Ex03.GarageLogic
             RepairComplete,
             RepairPaid
         }
+
+        /// <summary>
+        /// We cannot set RepairPaid if the current status is BeingRepaired
+        /// We can set RepairComplete only if the current status is BeingRepaired
+        /// if()
+        /// </summary>
 
         public string VehicleOwnerName
         {
@@ -44,7 +51,7 @@ namespace Ex03.GarageLogic
         {
             VehicleOwnerName = i_Name;
             PhoneOwner = i_PhoneOwner;
-            // VehicleStatus = BeingTreated;
+            VehicleStatus = eVehicleStatus.BeingRepaired;
             Vehicle = i_VehicleToAdd;
         }
 
