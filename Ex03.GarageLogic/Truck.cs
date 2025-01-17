@@ -44,7 +44,7 @@ namespace Ex03.GarageLogic
         {
             for (int i = 0; i < r_NumOfWheels; i++)
             {
-                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
+                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Truck));
             }
 
             InitializeVehicleEngine(i_Engine);
@@ -59,18 +59,5 @@ namespace Ex03.GarageLogic
         {
             return string.Format($"{VehicleInformation()}, {CargoVolume}, {IsCargoCooled}");
         }
-
-        //internal static string GetCargoVolume()
-        //{
-        //    StringBuilder bla = new StringBuilder();
-
-        //    //foreach (eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
-        //    //{
-        //        colorOptions.AppendLine(string.Format("cargo Volume"));
-        //    //}
-        //    string bla = "Please enter "
-
-        //    return colorOptions.ToString();
-        //}
     }
 }

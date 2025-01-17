@@ -17,12 +17,6 @@ namespace Ex03.GarageLogic
             RepairPaid
         }
 
-        /// <summary>
-        /// We cannot set RepairPaid if the current status is BeingRepaired
-        /// We can set RepairComplete only if the current status is BeingRepaired
-        /// if()
-        /// </summary>
-
         public string VehicleOwnerName
         {
             get { return m_VehicleOwnerName; }

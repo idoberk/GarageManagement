@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using static Ex03.GarageLogic.Car;
+using System.Text;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
 
@@ -63,7 +65,7 @@ namespace Ex03.GarageLogic
         {
             for (int i = 0; i < r_NumOfWheels; i++)
             {
-                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
+                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Motorcycle));
             }
 
             InitializeVehicleEngine(i_Engine);
@@ -72,6 +74,18 @@ namespace Ex03.GarageLogic
             {
                 ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Octan98;
             }
+        }
+
+        internal static string GetLicenseTypes()
+        {
+            StringBuilder licenseTypes = new StringBuilder();
+
+            foreach(eLicenseType licenseType in Enum.GetValues(typeof(eLicenseType)))
+            {
+                licenseTypes.AppendLine(string.Format($"{(int)licenseType}. {licenseType.ToString()}"));
+            }
+
+            return licenseTypes.ToString();
         }
 
         public override string ToString()

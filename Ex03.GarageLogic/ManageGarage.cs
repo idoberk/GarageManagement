@@ -1,84 +1,113 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using static Ex03.GarageLogic.Car;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.FuelEngine;
 using static Ex03.GarageLogic.VehicleFactory;
 using static Ex03.GarageLogic.VehicleRecord;
+using static Ex03.GarageLogic.Car;
 
 namespace Ex03.GarageLogic
 {
     // TODO: Consider try catch in certain places;
     // TODO: Consider refactoring some error messages to include spaces between words;
+    // TODO: Check the parsing method
     public class ManageGarage
     {
-        private Dictionary<string, VehicleRecord> m_RecordsList = new Dictionary<string, VehicleRecord>();
+        private readonly Dictionary<string, VehicleRecord> r_RecordsList = new Dictionary<string, VehicleRecord>();
 
         internal Dictionary<string, VehicleRecord> Records
         {
-            get
-            {
-                return m_RecordsList;
-            }
+            get { return r_RecordsList;}
         }
 
         private bool isVehicleExists(string i_LicensePlate)
         {
             bool isExists = Records.ContainsKey(i_LicensePlate);
 
-            //if (!isExists)
-            //{
-            //    throw new ArgumentException($"Error occurred. {i_LicensePlate} doesn't exist in the system.");
-            //}
+            return isExists;
+        }
+
+        public bool CheckVehicleExistenceAndUpdateStatus(string i_LicensePlate, out string o_Message)
+        {
+            bool isExists = isVehicleExists(i_LicensePlate);
+            o_Message = string.Empty;
+
+            if (isExists)
+            {
+                Records[i_LicensePlate].VehicleStatus = eVehicleStatus.BeingRepaired;
+                o_Message = "Vehicle already exists in the garage. Status has been changed to 'Being Repaired'.";
+            }
 
             return isExists;
         }
 
-        //public void AddVehicle(Vehicle i_VehicleToAdd, string i_Name, string i_PhoneOwner)
-        //{
-        //    VehicleRecord vehicleRecordToAdd = new VehicleRecord(i_VehicleToAdd, i_Name, i_PhoneOwner);
-        //    //CheckIfVehicleExists(i_VehicleToAdd.LicensePlate);
-        //    Records.Add(i_VehicleToAdd.LicensePlate, vehicleRecordToAdd);
-        //}
-
-        public void AddVehicle(
-            int i_VehicleToAdd,
-            int i_EngineType,
-            string i_Name,
-            string i_PhoneOwner,
-            string i_LicensePlate)
+        public void AddVehicle(string i_VehicleToAdd, string i_EngineType, string i_OwnerName, string i_OwnerPhoneNumber,
+            string i_LicensePlate, string i_VehicleModelName, string i_WheelManufacturerName)
         {
+            bool isVehicleSuccessfullyAdded = false;
+
+            if (!int.TryParse(i_VehicleToAdd, out int vehicleTypeChoice))
+            {
+                throw new FormatException($"An error occured when tried parsing {i_VehicleToAdd}");
+            }
+
+            if(!int.TryParse(i_EngineType, out int engineTypeChoice))
+            {
+                throw new FormatException($"An error occured when tried parsing {i_EngineType}");
+            }
+
+
             Vehicle newVehicle = CreateVehicle(
                 i_LicensePlate,
-                "mazda",
-                "michelin",
-                (eVehicleType)i_VehicleToAdd,
-                (eEngineType)i_EngineType);
+                i_VehicleModelName,
+                i_WheelManufacturerName,
+                (eVehicleType)vehicleTypeChoice,
+                (eEngineType)engineTypeChoice);
 
-            VehicleRecord newRecord = new VehicleRecord(newVehicle, i_Name, i_PhoneOwner);
+            if (newVehicle.VehicleProperties.ContainsKey(eVehicleProperties.CarColor.ToString()))
+            {
+                newVehicle.VehicleProperties[eVehicleProperties.CarColor.ToString()] = "1";
+            }
+            VehicleRecord newRecord = new VehicleRecord(newVehicle, i_OwnerName, i_OwnerPhoneNumber);
             Records.Add(i_LicensePlate, newRecord);
         }
 
-        public List<string> GetPropertiesValuesFromUser(int i_VehicleType)
+        public Dictionary<string, object> GetVehicleProperties(string i_LicensePlate)
         {
-            eVehicleType vehicleType = (eVehicleType)i_VehicleType;
-            string property = string.Empty;
-            List<string> properties = new List<string>();
+            Dictionary<string, object> vehicleProperties = Records[i_LicensePlate].Vehicle.VehicleProperties;
 
-            switch (vehicleType)
+
+            return vehicleProperties;
+        }
+
+        public void SetCarProperties(string i_LicensePlate, Dictionary<string, object> i_VehicleProperties)
+        {
+            // Records[i_LicensePlate].Vehicle.
+        }
+
+        public string GetCarDoors()
+        {
+            StringBuilder doorOptions = new StringBuilder();
+
+            foreach(eNumOfDoors numOfDoors in Enum.GetValues(typeof(eNumOfDoors)))
             {
-                case eVehicleType.Car:
-                    properties.Add(GetColors());
-                    properties.Add(GetDoors());
-                    break;
-                case eVehicleType.Truck:
-
-                    break;
+                doorOptions.AppendLine(string.Format($"{(int)numOfDoors}. {numOfDoors.ToString()}"));
             }
 
-            return properties;
+            return doorOptions.ToString();
+        }
 
+        public string GetCarColors()
+        {
+            StringBuilder colorOptions = new StringBuilder();
+
+            foreach(eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
+            {
+                colorOptions.AppendLine(string.Format($"{(int)carColor}. {carColor.ToString()}"));
+            }
+
+            return colorOptions.ToString();
         }
 
         public string GetVehicleTreatmentStatusOptions()
@@ -129,15 +158,37 @@ namespace Ex03.GarageLogic
             return fuelTypes.ToString();
         }
 
-        /// <summary>
-        /// 
-        /// We cannot set RepairPaid if the current status is BeingRepaired
-        /// We can set RepairComplete only if the current status is BeingRepaired
-        /// BeingRepaired = 1,
-        /// RepairComplete,
-        /// RepairPaid
-        /// 
-        /// </summary>
+        // Section 2.
+        public string GetVehiclesByStatus(bool i_IsBeingRepaired, bool i_IsRepairComplete, bool i_IsRepairPaid)
+        {
+            StringBuilder filteredList = new StringBuilder();
+
+            foreach (KeyValuePair<string, VehicleRecord> record in Records)
+            {
+                if (record.Value.VehicleStatus.Equals(eVehicleStatus.BeingRepaired) && i_IsBeingRepaired)
+                {
+                    filteredList.AppendLine($"{record.Key}");
+                }
+
+                if(record.Value.VehicleStatus.Equals(eVehicleStatus.RepairComplete) && i_IsRepairComplete)
+                {
+                    filteredList.AppendLine($"{record.Key}");
+                }
+
+                if (record.Value.VehicleStatus.Equals(eVehicleStatus.RepairPaid) && i_IsRepairPaid)
+                {
+                    filteredList.AppendLine($"{record.Key}");
+                }
+            }
+
+            if (filteredList.Length == 0)
+            {
+                filteredList.AppendLine("No vehicles matching the selected filters were found in the garage.");
+            }
+
+            return filteredList.ToString();
+        }
+
         // Section 3.
         public void ChangeVehicleStatus(string i_LicensePlate, string i_DesiredStatus)
         {
@@ -195,14 +246,15 @@ namespace Ex03.GarageLogic
                 List<Wheel> vehicleWheels = Records[i_VehicleLicensePlate].Vehicle.Wheels;
                 foreach (Wheel wheel in vehicleWheels)
                 {
-                    tireAirPressureToAdd = wheel.MaxTireAirPressure - wheel.CurrentTireAirPressure;
-                    wheel.InflateWheel(tireAirPressureToAdd);
+                    //tireAirPressureToAdd = wheel.MaxTireAirPressure - wheel.CurrentTireAirPressure;
+                    //wheel.InflateWheel(tireAirPressureToAdd);
+                    wheel.CurrentTireAirPressure = wheel.MaxTireAirPressure;
                 }
             }
         }
 
         // Section 5.
-        public void FillTank(string i_VehicleLicensePlate, string i_FuelType, string i_AmountOfFuelToAdd)
+        public void RefuelTank(string i_VehicleLicensePlate, string i_FuelType, string i_AmountOfFuelToAdd)
         {
             if (!float.TryParse(i_AmountOfFuelToAdd, out float amountOfFuelToAdd))
             {
@@ -227,6 +279,7 @@ namespace Ex03.GarageLogic
                     }
 
                     fuelEngine.Refuel(amountOfFuelToAdd, fuelEngine.FuelType);
+                    vehicle.UpdateEnergyPercentage();
                 }
                 else
                 {
@@ -235,7 +288,6 @@ namespace Ex03.GarageLogic
             }
         }
 
-        // TODO: Add FillBattery method;
         // Section 6.
         public void RechargeBattery(string i_VehicleLicensePlate, string i_MinutesOfBatteryToCharge)
         {
@@ -252,11 +304,20 @@ namespace Ex03.GarageLogic
                 {
                     float hoursToCharge = minutesOfBatteryToCharge / 60f;
                     electricEngine.Recharge(hoursToCharge);
+                    vehicle.UpdateEnergyPercentage();
                 }
                 else
                 {
                     throw new ArgumentException($"{vehicle.Engine} engine is not rechargeable");
                 }
+            }
+        }
+
+        public void ParseToInteger(string i_StringToParse, out int o_IntegerResult)
+        {
+            if (!int.TryParse(i_StringToParse, out o_IntegerResult))
+            {
+                throw new FormatException($"An error occured when tried parsing {i_StringToParse}");
             }
         }
     }

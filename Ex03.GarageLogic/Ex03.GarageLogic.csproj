@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="GarageLogicClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Car.cs" />

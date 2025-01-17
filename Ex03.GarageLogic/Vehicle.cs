@@ -11,12 +11,12 @@ namespace Ex03.GarageLogic
         private float m_EnergyPercentage;
         private Engine m_Engine;
         private List<Wheel> m_Wheels;
-        // private eVehicleType m_VehicleType;
         protected abstract List<eEngineType> SupportedEngineTypes { get; }
         protected abstract Dictionary<eEngineType, float> MaxTankCapacity { get; }
 
+        internal Dictionary<string, object> VehicleProperties { get; } = new Dictionary<string, object>();
 
-        public string ModelName
+        internal string ModelName
         {
             get { return m_ModelName; }
             set { m_ModelName = value; }
@@ -31,7 +31,17 @@ namespace Ex03.GarageLogic
         internal float EnergyPercentage
         {
             get { return m_EnergyPercentage; }
-            set { m_EnergyPercentage = value; }
+            set
+            {
+                if (value >= 0 && value <= 100)
+                {
+                    m_EnergyPercentage = value;
+                } 
+                else
+                {
+                    throw new ValueOutOfRangeException(0, 100);
+                }
+            }
         }
 
         internal Engine Engine
@@ -45,12 +55,6 @@ namespace Ex03.GarageLogic
             get { return m_Wheels; }
             set { m_Wheels = value; }
         }
-
-        //public eVehicleType VehicleType
-        //{
-        //    get { return m_VehicleType; }
-        //    set { m_VehicleType = value; }
-        //}
 
         internal Vehicle(string i_LicensePlate, string i_VehicleModelName, eEngineType i_Engine)
         {
@@ -83,6 +87,11 @@ namespace Ex03.GarageLogic
             Engine.EngineType = i_Engine;
         }
 
+        internal void UpdateEnergyPercentage()
+        {
+            EnergyPercentage = (Engine.CurrentEnergyAmount / Engine.MaxEnergyCapacity) * 100f;
+        }
+
         public string VehicleInformation()
         {
             string vehicleInfo = string.Format(@"License plate: {0}
@@ -90,7 +99,5 @@ Model name: {1}", m_LicensePlate, m_ModelName); // add  owner name + status , wh
             
             return vehicleInfo;
         }
-
-        //internal abstract void SetVehicleProperties();
     }
 }

@@ -21,10 +21,6 @@ namespace Ex03.GarageLogic
         protected override Dictionary<eEngineType, float> MaxTankCapacity { get; } = new Dictionary<eEngineType, float>()
         { { eEngineType.Fuel, 52f }, { eEngineType.Electric, 5.4f } };
 
-        //private Dictionary<string, object> m_Properties = new Dictionary<string, object>()
-        //{ { "car color", CarColor } };
-
-
         public enum eCarColor
         {
             Blue = 1,
@@ -91,38 +87,36 @@ namespace Ex03.GarageLogic
         internal void SetCarColor(string i_CarColor) 
         {
             int.TryParse(i_CarColor, out int intCarColor);
-            //throw exception
+
             if (Enum.IsDefined(typeof(eCarColor), intCarColor))
             {
                 CarColor = (eCarColor)intCarColor;
             }
         }
 
-        
+        //internal static string GetDoors()
+        //{
+        //    StringBuilder doorOptions = new StringBuilder();
 
-        internal static string GetDoors()
-        {
-            StringBuilder doorOptions = new StringBuilder();
+        //    foreach (eNumOfDoors numOfDoors in Enum.GetValues(typeof(eNumOfDoors)))
+        //    {
+        //        doorOptions.AppendLine(string.Format($"{(int)numOfDoors}. {numOfDoors.ToString()}"));
+        //    }
 
-            foreach (eNumOfDoors numOfDoors in Enum.GetValues(typeof(eNumOfDoors)))
-            {
-                doorOptions.AppendLine(string.Format($"{(int)numOfDoors}. {numOfDoors.ToString()}"));
-            }
+        //    return doorOptions.ToString();
+        //}
 
-            return doorOptions.ToString();
-        }
+        //internal static string GetColors()
+        //{
+        //    StringBuilder colorOptions = new StringBuilder();
 
-        internal static string GetColors()
-        {
-            StringBuilder colorOptions = new StringBuilder();
+        //    foreach (eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
+        //    {
+        //        colorOptions.AppendLine(string.Format($"{(int)carColor}. {carColor.ToString()}"));
+        //    }
 
-            foreach (eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
-            {
-                colorOptions.AppendLine(string.Format($"{(int)carColor}. {carColor.ToString()}"));
-            }
-
-            return colorOptions.ToString();
-        }
+        //    return colorOptions.ToString();
+        //}
 
 
 
