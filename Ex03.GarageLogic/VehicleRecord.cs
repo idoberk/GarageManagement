@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Ex03.GarageLogic
 {
@@ -47,6 +48,18 @@ namespace Ex03.GarageLogic
             PhoneOwner = i_PhoneOwner;
             VehicleStatus = eVehicleStatus.BeingRepaired;
             Vehicle = i_VehicleToAdd;
+        }
+
+        internal static string GetVehicleTreatmentStatusOptions()
+        {
+            StringBuilder treatmentOptions = new StringBuilder();
+
+            foreach(eVehicleStatus status in Enum.GetValues(typeof(eVehicleStatus)))
+            {
+                treatmentOptions.AppendLine(string.Format($"{(int)status}. {status.ToString()}"));
+            }
+
+            return treatmentOptions.ToString();
         }
 
         public override string ToString()

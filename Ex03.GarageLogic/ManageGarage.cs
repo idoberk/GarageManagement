@@ -5,13 +5,13 @@ using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.FuelEngine;
 using static Ex03.GarageLogic.VehicleFactory;
 using static Ex03.GarageLogic.VehicleRecord;
-using static Ex03.GarageLogic.Car;
 
 namespace Ex03.GarageLogic
 {
     // TODO: Consider try catch in certain places;
     // TODO: Consider refactoring some error messages to include spaces between words;
     // TODO: Check the parsing method
+
     public class ManageGarage
     {
         private readonly Dictionary<string, VehicleRecord> r_RecordsList = new Dictionary<string, VehicleRecord>();
@@ -43,119 +43,127 @@ namespace Ex03.GarageLogic
         }
 
         public void AddVehicle(string i_VehicleToAdd, string i_EngineType, string i_OwnerName, string i_OwnerPhoneNumber,
-            string i_LicensePlate, string i_VehicleModelName, string i_WheelManufacturerName)
+            string i_LicensePlate, string i_VehicleModelName, string i_WheelManufacturerName, string i_CurrentTireAirPressure)
         {
             bool isVehicleSuccessfullyAdded = false;
 
-            if (!int.TryParse(i_VehicleToAdd, out int vehicleTypeChoice))
-            {
-                throw new FormatException($"An error occured when tried parsing {i_VehicleToAdd}");
-            }
-
-            if(!int.TryParse(i_EngineType, out int engineTypeChoice))
-            {
-                throw new FormatException($"An error occured when tried parsing {i_EngineType}");
-            }
+            ParseToInteger(i_VehicleToAdd, out int vehicleTypeChoice);
+            ParseToInteger(i_EngineType, out int engineTypeChoice);
+            ParseToFloat(i_CurrentTireAirPressure, out float tireAirPressure);
 
 
             Vehicle newVehicle = CreateVehicle(
                 i_LicensePlate,
                 i_VehicleModelName,
                 i_WheelManufacturerName,
+                tireAirPressure,
                 (eVehicleType)vehicleTypeChoice,
                 (eEngineType)engineTypeChoice);
 
-            if (newVehicle.VehicleProperties.ContainsKey(eVehicleProperties.CarColor.ToString()))
-            {
-                newVehicle.VehicleProperties[eVehicleProperties.CarColor.ToString()] = "1";
-            }
+            
             VehicleRecord newRecord = new VehicleRecord(newVehicle, i_OwnerName, i_OwnerPhoneNumber);
             Records.Add(i_LicensePlate, newRecord);
         }
 
         public Dictionary<string, object> GetVehicleProperties(string i_LicensePlate)
         {
-            Dictionary<string, object> vehicleProperties = Records[i_LicensePlate].Vehicle.VehicleProperties;
+            Dictionary<string, object> propertyPrompts = new Dictionary<string, object>();
+            Vehicle vehicle = Records[i_LicensePlate].Vehicle;
 
+            foreach (KeyValuePair<string, object> property in vehicle.VehicleProperties)
+            {
+                switch (property.Key)
+                {
+                    case nameof(Car.eCarColor):
+                        propertyPrompts.Add(property.Key, GetCarColors());
+                        break;
 
-            return vehicleProperties;
+                    case nameof(Car.eNumOfDoors):
+                        propertyPrompts.Add(property.Key, GetCarDoors());
+                        break;
+
+                    case nameof(Motorcycle.eLicenseType):
+                        propertyPrompts.Add(property.Key, GetLicenseTypes());
+                        break;
+
+                    case nameof(Motorcycle.EngineVolume):
+                        propertyPrompts.Add(property.Key, GetEngineVolume());
+                        break;
+
+                    case nameof(Truck.CargoVolume):
+                        propertyPrompts.Add(property.Key, GetCargoVolume());
+                        break;
+
+                    case nameof(Truck.IsCargoCooled):
+                        propertyPrompts.Add(property.Key, GetCargoCooled());
+                        break;
+                }
+            }
+
+            return propertyPrompts;
         }
 
-        public void SetCarProperties(string i_LicensePlate, Dictionary<string, object> i_VehicleProperties)
+        public void SetVehicleProperties(string i_LicensePlate, Dictionary<string, string> i_VehiclePropertiesPrompts)
         {
-            // Records[i_LicensePlate].Vehicle.
+            Vehicle vehicle = Records[i_LicensePlate].Vehicle;
+
+            foreach (KeyValuePair<string, string> property in i_VehiclePropertiesPrompts)
+            {
+                if (vehicle.VehicleProperties.ContainsKey(property.Key))
+                {
+                    vehicle.SetProperty(property.Key, property.Value);
+                }
+            }
         }
 
         public string GetCarDoors()
         {
-            StringBuilder doorOptions = new StringBuilder();
-
-            foreach(eNumOfDoors numOfDoors in Enum.GetValues(typeof(eNumOfDoors)))
-            {
-                doorOptions.AppendLine(string.Format($"{(int)numOfDoors}. {numOfDoors.ToString()}"));
-            }
-
-            return doorOptions.ToString();
+            return Car.GetDoors();
         }
 
         public string GetCarColors()
         {
-            StringBuilder colorOptions = new StringBuilder();
-
-            foreach(eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
-            {
-                colorOptions.AppendLine(string.Format($"{(int)carColor}. {carColor.ToString()}"));
-            }
-
-            return colorOptions.ToString();
+            return Car.GetColors();
         }
 
         public string GetVehicleTreatmentStatusOptions()
         {
-            StringBuilder treatmentOptions = new StringBuilder();
-
-            foreach (eVehicleStatus status in Enum.GetValues(typeof(eVehicleStatus)))
-            {
-                treatmentOptions.AppendLine(string.Format($"{(int)status}. {status.ToString()}"));
-            }
-
-            return treatmentOptions.ToString();
+            return VehicleRecord.GetVehicleTreatmentStatusOptions();
         }
 
         public string GetVehicleTypes()
         {
-            StringBuilder vehicleTypes = new StringBuilder();
-
-            foreach (eVehicleType vehicleType in Enum.GetValues(typeof(eVehicleType)))
-            {
-                vehicleTypes.AppendLine(string.Format($"{(int)vehicleType}. {vehicleType.ToString()}"));
-            }
-
-            return vehicleTypes.ToString();
+            return VehicleFactory.GetVehicleTypes();
         }
 
         public string GetEngineTypes()
         {
-            StringBuilder engineTypes = new StringBuilder();
-
-            foreach (eEngineType engineType in Enum.GetValues(typeof(eEngineType)))
-            {
-                engineTypes.AppendLine(string.Format($"{(int)engineType}. {engineType.ToString()}"));
-            }
-
-            return engineTypes.ToString();
+            return Engine.GetEngineTypes();
         }
 
         public string GetFuelTypes()
         {
-            StringBuilder fuelTypes = new StringBuilder();
+            return FuelEngine.GetFuelTypes();
+        }
 
-            foreach (eFuelType fuelType in Enum.GetValues(typeof(eFuelType)))
-            {
-                fuelTypes.AppendLine(string.Format($"{(int)fuelType}. {fuelType.ToString()}"));
-            }
+        public string GetLicenseTypes()
+        {
+            return Motorcycle.GetLicenseTypes();
+        }
 
-            return fuelTypes.ToString();
+        public static string GetEngineVolume()
+        {
+            return Motorcycle.GetEngineVolume();
+        }
+
+        public static string GetCargoVolume()
+        {
+            return Truck.GetCargoVolume();
+        }
+
+        public static string GetCargoCooled()
+        {
+            return Truck.GetCargoCooled();
         }
 
         // Section 2.
@@ -313,9 +321,17 @@ namespace Ex03.GarageLogic
             }
         }
 
-        public void ParseToInteger(string i_StringToParse, out int o_IntegerResult)
+        public static void ParseToInteger(string i_StringToParse, out int o_IntegerResult)
         {
             if (!int.TryParse(i_StringToParse, out o_IntegerResult))
+            {
+                throw new FormatException($"An error occured when tried parsing {i_StringToParse}");
+            }
+        }
+
+        public static void ParseToFloat(string i_StringToParse, out float o_FloatResult)
+        {
+            if(!float.TryParse(i_StringToParse, out o_FloatResult))
             {
                 throw new FormatException($"An error occured when tried parsing {i_StringToParse}");
             }

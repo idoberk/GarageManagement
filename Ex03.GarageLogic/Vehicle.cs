@@ -13,8 +13,7 @@ namespace Ex03.GarageLogic
         private List<Wheel> m_Wheels;
         protected abstract List<eEngineType> SupportedEngineTypes { get; }
         protected abstract Dictionary<eEngineType, float> MaxTankCapacity { get; }
-
-        internal Dictionary<string, object> VehicleProperties { get; } = new Dictionary<string, object>();
+        internal abstract Dictionary<string, object> VehicleProperties { get; }
 
         internal string ModelName
         {
@@ -33,14 +32,12 @@ namespace Ex03.GarageLogic
             get { return m_EnergyPercentage; }
             set
             {
-                if (value >= 0 && value <= 100)
-                {
-                    m_EnergyPercentage = value;
-                } 
-                else
+                if (value < 0 || value > 100)
                 {
                     throw new ValueOutOfRangeException(0, 100);
-                }
+                } 
+
+                m_EnergyPercentage = value;
             }
         }
 
@@ -56,7 +53,7 @@ namespace Ex03.GarageLogic
             set { m_Wheels = value; }
         }
 
-        internal Vehicle(string i_LicensePlate, string i_VehicleModelName, eEngineType i_Engine)
+        internal Vehicle(string i_LicensePlate, string i_VehicleModelName)
         {
             LicensePlate = i_LicensePlate;
             ModelName = i_VehicleModelName;
@@ -72,16 +69,12 @@ namespace Ex03.GarageLogic
 
             if (i_Engine == eEngineType.Fuel)
             {
-                Engine = new FuelEngine();
-            }
+               Engine = new FuelEngine(MaxTankCapacity[i_Engine], 0f);
+
+            } 
             else
             {
-                Engine = new ElectricEngine();
-            }
-
-            if (MaxTankCapacity.ContainsKey(i_Engine))
-            {
-                Engine.MaxEnergyCapacity = MaxTankCapacity[i_Engine];
+                Engine = new ElectricEngine(MaxTankCapacity[i_Engine], 0f);
             }
 
             Engine.EngineType = i_Engine;
@@ -89,10 +82,19 @@ namespace Ex03.GarageLogic
 
         internal void UpdateEnergyPercentage()
         {
-            EnergyPercentage = (Engine.CurrentEnergyAmount / Engine.MaxEnergyCapacity) * 100f;
+            if (Engine is ElectricEngine electricEngine)
+            {
+                EnergyPercentage = (electricEngine.RemainingHoursInBattery / electricEngine.MaxBatteryCapacity) * 100f;
+            }
+            else if(Engine is FuelEngine fuelEngine)
+            {
+                EnergyPercentage = (fuelEngine.RemainingLitersInTank / fuelEngine.MaxTankCapacity) * 100f;
+            }
         }
 
-        public string VehicleInformation()
+        internal abstract void SetProperty(string i_PropertyName, string i_Value);
+
+        protected string VehicleInformation()
         {
             string vehicleInfo = string.Format(@"License plate: {0}
 Model name: {1}", m_LicensePlate, m_ModelName); // add  owner name + status , wheels information, energy-type and status

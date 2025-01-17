@@ -3,6 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
+using static Ex03.GarageLogic.VehicleFactory;
 
 namespace Ex03.GarageLogic
 {
@@ -21,6 +22,9 @@ namespace Ex03.GarageLogic
         protected override Dictionary<eEngineType, float> MaxTankCapacity { get; } = new Dictionary<eEngineType, float>()
         { { eEngineType.Fuel, 52f }, { eEngineType.Electric, 5.4f } };
 
+        internal override Dictionary<string, object> VehicleProperties { get; } = new Dictionary<string, object>()
+            { { nameof(eCarColor), string.Empty }, { nameof(eNumOfDoors), string.Empty } };
+
         public enum eCarColor
         {
             Blue = 1,
@@ -37,43 +41,40 @@ namespace Ex03.GarageLogic
             Five
         }
 
-        internal eCarColor CarColor
+        private eCarColor CarColor
         {
             get { return m_CarColor; }
             set
             {
-                if (Enum.IsDefined(typeof(eCarColor), value))
-                {
-                    m_CarColor = value;
-                }
-                else
+                if (!Enum.IsDefined(typeof(eCarColor), value))
                 {
                     throw new ArgumentException("Invalid color input");
                 }
+
+                m_CarColor = value;
             }
         }
 
-        internal eNumOfDoors NumOfDoors
+        private eNumOfDoors NumOfDoors
         {
             get { return m_NumOfDoors; }
             set
             {
-                if (Enum.IsDefined(typeof(eNumOfDoors), value))
-                {
-                    m_NumOfDoors = value;
-                }
-                else
+                if (!Enum.IsDefined(typeof(eNumOfDoors), value))
                 {
                     throw new ArgumentException("Invalid doors input");
                 }
+
+                m_NumOfDoors = value;
             }
         }
 
-        internal Car(string i_LicensePlate, string i_ModelName, string i_ManufacturerName ,eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
+        internal Car(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_Engine) :
+            base(i_LicensePlate, i_ModelName)
         {
             for (int i = 0; i < r_NumOfWheels; i++)
             {
-                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Car));
+                Wheels.Add(new Wheel(i_ManufacturerName, i_CurrentTireAirPressure, (float)eMaxTireAirPressure.Car));
             }
 
             InitializeVehicleEngine(i_Engine);
@@ -84,41 +85,60 @@ namespace Ex03.GarageLogic
             }
         }
 
-        internal void SetCarColor(string i_CarColor) 
+        private void setCarColor(string i_CarColor)
         {
-            int.TryParse(i_CarColor, out int intCarColor);
+            ManageGarage.ParseToInteger(i_CarColor, out int parsedCarColor);
 
-            if (Enum.IsDefined(typeof(eCarColor), intCarColor))
+            CarColor = (eCarColor)parsedCarColor;
+        }
+
+        private void setNumberOfDoors(string i_NumOfDoors)
+        {
+            ManageGarage.ParseToInteger(i_NumOfDoors, out int parsedNumOfDoors);
+
+            NumOfDoors = (eNumOfDoors)parsedNumOfDoors;
+        }
+
+        internal override void SetProperty(string i_PropertyName, string i_Value)
+        {
+            switch (i_PropertyName)
             {
-                CarColor = (eCarColor)intCarColor;
+                case nameof(eCarColor):
+                    setCarColor(i_Value);
+                    break;
+
+                case nameof(eNumOfDoors):
+                    setNumberOfDoors(i_Value);
+                    break;
+
+                default:
+                    throw new ArgumentException($"Property {i_PropertyName} is not supported for {GetType().Name}");
             }
         }
 
-        //internal static string GetDoors()
-        //{
-        //    StringBuilder doorOptions = new StringBuilder();
+        internal static string GetDoors()
+        {
+            StringBuilder doorOptions = new StringBuilder();
 
-        //    foreach (eNumOfDoors numOfDoors in Enum.GetValues(typeof(eNumOfDoors)))
-        //    {
-        //        doorOptions.AppendLine(string.Format($"{(int)numOfDoors}. {numOfDoors.ToString()}"));
-        //    }
+            foreach(eNumOfDoors numOfDoors in Enum.GetValues(typeof(eNumOfDoors)))
+            {
+                doorOptions.AppendLine(string.Format($"{(int)numOfDoors}. {numOfDoors.ToString()}"));
+            }
 
-        //    return doorOptions.ToString();
-        //}
+            return doorOptions.ToString();
+        }
 
-        //internal static string GetColors()
-        //{
-        //    StringBuilder colorOptions = new StringBuilder();
+        internal static string GetColors()
+        {
+            StringBuilder colorOptions = new StringBuilder();
 
-        //    foreach (eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
-        //    {
-        //        colorOptions.AppendLine(string.Format($"{(int)carColor}. {carColor.ToString()}"));
-        //    }
+            foreach(eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
+            {
+                colorOptions.AppendLine(string.Format($"{(int)carColor}. {carColor.ToString()}"));
+            }
 
-        //    return colorOptions.ToString();
-        //}
-
-
+            return colorOptions.ToString();
+        }
 
         public override string ToString()
         {

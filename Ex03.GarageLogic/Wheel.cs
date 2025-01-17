@@ -20,14 +20,12 @@ namespace Ex03.GarageLogic
             get { return m_ManufacturerName; }
             set
             {
-                if (value != string.Empty)
-                {
-                    m_ManufacturerName = value;
-                }
-                else
+                if (string.IsNullOrEmpty(value))
                 {
                     throw new ArgumentException($"{value} is an invalid name");
                 }
+                
+                m_ManufacturerName = value;
             }
         }
 
@@ -36,14 +34,12 @@ namespace Ex03.GarageLogic
             get { return m_CurrentTireAirPressure; }
             set
             {
-                if (value >= 0 && value <= MaxTireAirPressure)
+                if (value < 0 || value > MaxTireAirPressure)
                 {
-                    m_CurrentTireAirPressure = value;
+                    throw new ValueOutOfRangeException(0, MaxTireAirPressure);
                 }
-                else
-                {
-                    throw new ArgumentException($"Current tire air pressure cannot be negative or exceed {MaxTireAirPressure}");
-                }
+
+                m_CurrentTireAirPressure = value;
             }
         }
 
@@ -53,10 +49,11 @@ namespace Ex03.GarageLogic
             set { m_MaxTireAirPressure = value; }
         }
 
-        internal Wheel(string i_ManufacturerName, float i_MaxTireAirPressure)
+        internal Wheel(string i_ManufacturerName, float i_CurrentTireAirPressure, float i_MaxTireAirPressure)
         {
             ManufacturerName = i_ManufacturerName;
             MaxTireAirPressure = i_MaxTireAirPressure;       
+            CurrentTireAirPressure = i_CurrentTireAirPressure;
         }
 
         internal void InflateWheel(float i_AddAirPressure)

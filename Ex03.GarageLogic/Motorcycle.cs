@@ -16,10 +16,13 @@ namespace Ex03.GarageLogic
         private int m_EngineVolume;
 
         protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType> 
-        {eEngineType.Fuel, eEngineType.Electric};
+            {eEngineType.Fuel, eEngineType.Electric};
 
         protected override Dictionary<eEngineType, float> MaxTankCapacity { get; } = new Dictionary<eEngineType, float>()
-        { { eEngineType.Fuel, 6.2f }, { eEngineType.Electric, 2.9f } };
+            { { eEngineType.Fuel, 6.2f }, { eEngineType.Electric, 2.9f } };
+
+        internal override Dictionary<string, object> VehicleProperties { get; } = new Dictionary<string, object>()
+            { { nameof(eLicenseType), string.Empty }, { nameof(EngineVolume), 0 } };
 
         public enum eLicenseType
         {
@@ -34,14 +37,12 @@ namespace Ex03.GarageLogic
             get { return m_LicenseType; }
             set
             {
-                if (Enum.IsDefined(typeof(eLicenseType), value))
-                {
-                    m_LicenseType = value;
-                }
-                else
+                if (!Enum.IsDefined(typeof(eLicenseType), value))
                 {
                     throw new ArgumentException("Invalid license type input");
                 }
+                
+                m_LicenseType = value;
             }
         }
 
@@ -56,16 +57,17 @@ namespace Ex03.GarageLogic
                 }
                 else
                 {
-                    throw new ArgumentException("Motorcycle's engine capacity cannot be negative");
+                    throw new ArgumentException($"{GetType().Name}'s engine capacity cannot be negative");
                 }
             }
         }
 
-        internal Motorcycle(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, eEngineType i_Engine) : base(i_LicensePlate, i_ModelName, i_Engine)
+        internal Motorcycle(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_Engine) 
+            : base(i_LicensePlate, i_ModelName)
         {
             for (int i = 0; i < r_NumOfWheels; i++)
             {
-                Wheels.Add(new Wheel(i_ManufacturerName, (float)eMaxTireAirPressure.Motorcycle));
+                Wheels.Add(new Wheel(i_ManufacturerName, i_CurrentTireAirPressure, (float)eMaxTireAirPressure.Motorcycle));
             }
 
             InitializeVehicleEngine(i_Engine);
@@ -86,6 +88,44 @@ namespace Ex03.GarageLogic
             }
 
             return licenseTypes.ToString();
+        }
+
+        internal static string GetEngineVolume()
+        {
+            string engineVolumePrompt = "Please enter the engine volume: (An integer) ";
+
+            return engineVolumePrompt;
+        }
+
+        private void setLicenseType(string i_LicenseType)
+        {
+            ManageGarage.ParseToInteger(i_LicenseType, out int parsedLicenseType);
+
+            LicenseType = (eLicenseType)parsedLicenseType;
+        }
+
+        private void setEngineVolume(string i_EngineVolume)
+        {
+            ManageGarage.ParseToInteger(i_EngineVolume, out int parsedEngineVolume);
+
+            EngineVolume = parsedEngineVolume;
+        }
+
+        internal override void SetProperty(string i_PropertyName, string i_Value)
+        {
+            switch(i_PropertyName)
+            {
+                case nameof(eLicenseType):
+                    setLicenseType(i_Value);
+                    break;
+
+                case nameof(EngineVolume):
+                    setEngineVolume(i_Value);
+                    break;
+
+                default:
+                    throw new ArgumentException($"Property {i_PropertyName} is not supported for {GetType().Name}");
+            }
         }
 
         public override string ToString()

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Text;
 
 namespace Ex03.GarageLogic
 {
     public class FuelEngine : Engine
     {
+        private float m_RemainingLitersInTank;
+        private float m_MaxTankCapacity;
         private eFuelType m_FuelType;
 
         public enum eFuelType
@@ -14,6 +17,26 @@ namespace Ex03.GarageLogic
             Soler
         }
 
+        public float MaxTankCapacity
+        {
+            get { return m_MaxTankCapacity; }
+            set { m_MaxTankCapacity = value; }
+        }
+
+        public float RemainingLitersInTank
+        {
+            get { return m_RemainingLitersInTank; }
+            set 
+            {
+                if (value < 0 || value > MaxTankCapacity)
+                {
+                    throw new ValueOutOfRangeException(0, MaxTankCapacity);
+                }
+
+                m_RemainingLitersInTank = value;
+            }
+        }
+
         public eFuelType FuelType
         {
             get { return m_FuelType; }
@@ -21,24 +44,38 @@ namespace Ex03.GarageLogic
             {
                 if (Enum.IsDefined(typeof(eFuelType), value))
                 {
-                    m_FuelType = value;
-                }
-                else
-                {
                     throw new ArgumentException("Invalid fuel type input");
                 }
+                
+                m_FuelType = value;
             }
+        }
+        public FuelEngine(float i_MaxTankCapacity, float i_RemainingLitersInTank)
+        {
+            MaxTankCapacity = i_MaxTankCapacity;
+            RemainingLitersInTank = i_RemainingLitersInTank;
         }
 
         public void Refuel(float i_FuelAmountToFill, eFuelType i_FuelType)
         {
-            if (CurrentEnergyAmount + i_FuelAmountToFill > MaxEnergyCapacity || CurrentEnergyAmount + i_FuelAmountToFill < 0)
+            if (RemainingLitersInTank + i_FuelAmountToFill > MaxTankCapacity || RemainingLitersInTank + i_FuelAmountToFill < 0)
             {
-                throw new ValueOutOfRangeException(0, MaxEnergyCapacity);
+                throw new ValueOutOfRangeException(0, MaxTankCapacity);
             }
 
-            CurrentEnergyAmount += i_FuelAmountToFill;
+            RemainingLitersInTank += i_FuelAmountToFill;
+        }
 
+        internal static string GetFuelTypes()
+        {
+            StringBuilder fuelTypes = new StringBuilder();
+
+            foreach(eFuelType fuelType in Enum.GetValues(typeof(eFuelType)))
+            {
+                fuelTypes.AppendLine(string.Format($"{(int)fuelType}. {fuelType.ToString()}"));
+            }
+
+            return fuelTypes.ToString();
         }
     }
 }

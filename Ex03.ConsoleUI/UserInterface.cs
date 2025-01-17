@@ -24,7 +24,7 @@ namespace Ex03.ConsoleUI
         {
             // createNewVehicle("hello", "Mazda", "Michelin");
             insertVehicle();
-            rechargeVehicle();
+            // rechargeVehicle();
             // refuelVehicle();
             // changeVehicleStatus();
 
@@ -141,7 +141,6 @@ namespace Ex03.ConsoleUI
         private void displayInvalidInput()
         {
             printPrompt("Invalid input. Please try again");
-            
         }
 
         private void insertVehicle()
@@ -166,27 +165,44 @@ namespace Ex03.ConsoleUI
             getEngineType(out string engineType);
             getVehicleModelName(out string vehicleModelName);
             getWheelManufacturerName(out string wheelManufacturerName);
-            r_GarageManagement.AddVehicle(vehicleType, engineType, ownerName, ownerPhoneNumber, i_LicensePlate, vehicleModelName, wheelManufacturerName);
+            getWheelAirPressure(out string tireAirPressure);
+            r_GarageManagement.AddVehicle(vehicleType, engineType, ownerName, ownerPhoneNumber, i_LicensePlate, vehicleModelName, wheelManufacturerName, tireAirPressure);
 
-            getVehicleProperties(i_LicensePlate);
-        }
+            Dictionary<string, object> requiredProperties = r_GarageManagement.GetVehicleProperties(i_LicensePlate);
+            Dictionary<string, string> propertyValues = new Dictionary<string, string>();
 
-        private void getVehicleProperties(string i_LicensePlate)
-        {
-            Dictionary<string, object> vehicleProperties = r_GarageManagement.GetVehicleProperties(i_LicensePlate);
-
-            if (vehicleProperties.ContainsKey(VehicleFactory.eVehicleProperties.CarColor.ToString()))
+            foreach (KeyValuePair<string, object> property in requiredProperties)
             {
-                printPrompt("Please select the color of the car: ");
-                printPrompt(r_GarageManagement.GetCarColors());
-                vehicleProperties[VehicleFactory.eVehicleProperties.CarColor.ToString()] = getUserInput();
+                getInput((string)property.Value, out string propertyInput);
+                propertyValues.Add(property.Key, propertyInput);
             }
+
+            r_GarageManagement.SetVehicleProperties(i_LicensePlate, propertyValues);
         }
+
+        //private void getVehicleProperties(string i_LicensePlate)
+        //{
+        //    Dictionary<string, object> vehicleProperties = r_GarageManagement.GetVehicleProperties(i_LicensePlate);
+
+        //    if (vehicleProperties.ContainsKey(VehicleFactory.eVehicleProperties.CarColor.ToString()))
+        //    {
+        //        printPrompt("Please select the color of the car: ");
+        //        printPrompt(r_GarageManagement.GetCarColors());
+        //        vehicleProperties[VehicleFactory.eVehicleProperties.CarColor.ToString()] = getUserInput();
+        //    }
+        //}
 
         private void getInput(string i_PromptMessage, out string o_ParsedInput)
         {
             printPrompt(i_PromptMessage);
             o_ParsedInput = getUserInput();
+        }
+
+        private void getVehicleEnergyPrecentage(out string o_VehicleModelName)
+        {
+            getInput("Please enter your vehicle's model name: ", out o_VehicleModelName);
+            //printPrompt("Please enter your vehicle's model name: ");
+            //o_VehicleModelName = getUserInput();
         }
 
         private void getVehicleModelName(out string o_VehicleModelName)
@@ -201,6 +217,12 @@ namespace Ex03.ConsoleUI
             getInput("Please enter your wheel's manufacturer name: ", out o_WheelManufacturerName);
             //printPrompt("Please enter your wheel's manufacturer name: ");
             //o_WheelManufacturerName = getUserInput();
+        }
+
+        private void getWheelAirPressure(out string o_WheelWheelAirPressure)
+        {
+            getInput("Please enter your wheel's air pressure: ", out o_WheelWheelAirPressure);
+            
         }
 
         private void getLicensePlate(out string o_LicensePlateInput)
@@ -264,13 +286,13 @@ namespace Ex03.ConsoleUI
         {
             string userInput = string.Empty;
             
-            while (!userInput.Equals("Y") && !userInput.Equals("y") && !userInput.Equals("N") && !userInput.Equals("n"))
+            while (!userInput.ToUpper().Equals("Y") && !userInput.ToUpper().Equals("N"))
             {
                 displayInvalidInput();
                 userInput = getUserInput();
             }
 
-            o_IsInputYes = userInput.Equals("Y") || userInput.Equals("y");
+            o_IsInputYes = userInput.ToUpper().Equals("Y");
         }
 
         private void changeVehicleStatus()
