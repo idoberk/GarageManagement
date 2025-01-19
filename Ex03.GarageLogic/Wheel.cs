@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Ex03.GarageLogic
 {
@@ -15,14 +16,14 @@ namespace Ex03.GarageLogic
             Car = 34
         }
 
-        internal string ManufacturerName
+        private string ManufacturerName
         {
             get { return m_ManufacturerName; }
             set
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw new ArgumentException($"{value} is an invalid name");
+                    throw new ArgumentException($"{value} is an invalid name (can't be empty).");
                 }
                 
                 m_ManufacturerName = value;
@@ -32,7 +33,7 @@ namespace Ex03.GarageLogic
         internal float CurrentTireAirPressure
         {
             get { return m_CurrentTireAirPressure; }
-            set
+            private set
             {
                 if (value < 0 || value > MaxTireAirPressure)
                 {
@@ -46,7 +47,7 @@ namespace Ex03.GarageLogic
         internal float MaxTireAirPressure
         {
             get { return m_MaxTireAirPressure; }
-            set { m_MaxTireAirPressure = value; }
+            private set { m_MaxTireAirPressure = value; }
         }
 
         internal Wheel(string i_ManufacturerName, float i_CurrentTireAirPressure, float i_MaxTireAirPressure)
@@ -58,15 +59,24 @@ namespace Ex03.GarageLogic
 
         internal void InflateWheel(float i_AddAirPressure)
         {
-            if(m_CurrentTireAirPressure + i_AddAirPressure > m_MaxTireAirPressure || m_CurrentTireAirPressure + i_AddAirPressure < 0)
+            if(CurrentTireAirPressure + i_AddAirPressure > MaxTireAirPressure || CurrentTireAirPressure + i_AddAirPressure < 0)
             {
-                throw new ValueOutOfRangeException(0, m_MaxTireAirPressure);
+                throw new ValueOutOfRangeException(0, MaxTireAirPressure);
             }
 
-            m_CurrentTireAirPressure += i_AddAirPressure;
+            CurrentTireAirPressure += i_AddAirPressure;
         }
 
-        // TODO: Override ToString (functionality section 7).
+        public override string ToString()
+        {
+            StringBuilder wheelInfo = new StringBuilder();
+
+            wheelInfo.Append(string.Format("{0}'s manufacturer name is {1} "
+                                            + "and the tire air pressure is {2}{3}"
+                , GetType().Name, ManufacturerName, CurrentTireAirPressure, Environment.NewLine));
+
+            return wheelInfo.ToString();
+        }
     }
 
    

@@ -3,28 +3,22 @@ using System.Text;
 
 namespace Ex03.GarageLogic
 {
-    public abstract class Engine
+    internal abstract class Engine
     {
-        //private float m_MaxEnergyCapacity;
-        //private float m_CurrentEnergyAmount;
         private eEngineType m_EngineType;
-
-        //public float MaxEnergyCapacity
-        //{
-        //    get { return m_MaxEnergyCapacity; }
-        //    set { m_MaxEnergyCapacity = value; }
-        //}
-
-        //public float CurrentEnergyAmount
-        //{
-        //    get { return m_CurrentEnergyAmount; }
-        //    set { m_CurrentEnergyAmount = value; }
-        //}
 
         public eEngineType EngineType
         {
             get { return m_EngineType; }
-            set { m_EngineType = value; }
+            set
+            {
+                if(!Enum.IsDefined(typeof(eEngineType), value))
+                {
+                    throw new ArgumentException($"{value} is an invalid engine type.");
+                }
+
+                m_EngineType = value;
+            }
         }
 
         public enum eEngineType
@@ -43,6 +37,17 @@ namespace Ex03.GarageLogic
             }
 
             return engineTypes.ToString();
+        }
+
+        public override string ToString()
+        {
+            StringBuilder engineInfo = new StringBuilder();
+
+            engineInfo.Append(string.Format("{0} Engine's information {1}"
+                                            + "==============={1}"
+            , EngineType, Environment.NewLine));
+
+            return engineInfo.ToString();
         }
     }
 }

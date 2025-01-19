@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
@@ -27,7 +28,7 @@ namespace Ex03.GarageLogic
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException($"{GetType().Name}'s cargo volume cannot be negative");
+                    throw new ArgumentException($"{GetType().Name}'s cargo volume cannot be negative.");
                 }
                 
                 m_CargoVolume = value;
@@ -96,7 +97,7 @@ namespace Ex03.GarageLogic
                     break;
 
                 default:
-                    throw new ArgumentException($"Property {i_PropertyName} is not supported for {GetType().Name}");
+                    throw new ArgumentException($"Property {i_PropertyName} is not supported for {GetType().Name}.");
             }
         }
 
@@ -116,7 +117,19 @@ namespace Ex03.GarageLogic
 
         public override string ToString()
         {
-            return string.Format($"{VehicleInformation()}, {CargoVolume}, {IsCargoCooled}");
+            StringBuilder truckInfo = new StringBuilder();
+            string isCooled = string.Empty;
+
+            if (!IsCargoCooled)
+            {
+                isCooled = " not";
+            }
+
+            truckInfo.Append(string.Format("{0}{4}"
+                                           + "{1}'s cargo volume is {2:0.00} and its cargo is{3} cooled{4}"
+                , base.ToString(), GetType().Name, CargoVolume, isCooled, Environment.NewLine));
+
+            return truckInfo.ToString();
         }
     }
 }

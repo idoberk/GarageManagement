@@ -44,7 +44,7 @@ namespace Ex03.GarageLogic
             {
                 if (!Enum.IsDefined(typeof(eCarColor), value))
                 {
-                    throw new ArgumentException("Invalid color input");
+                    throw new ArgumentException("Invalid color input.");
                 }
 
                 m_CarColor = value;
@@ -58,7 +58,7 @@ namespace Ex03.GarageLogic
             {
                 if (!Enum.IsDefined(typeof(eNumOfDoors), value))
                 {
-                    throw new ArgumentException("Invalid doors input");
+                    throw new ArgumentException("Invalid doors input.");
                 }
 
                 m_NumOfDoors = value;
@@ -116,6 +116,7 @@ namespace Ex03.GarageLogic
         {
             StringBuilder doorOptions = new StringBuilder();
 
+            doorOptions.AppendLine("Please choose the number of doors: ");
             foreach(eNumOfDoors numOfDoors in Enum.GetValues(typeof(eNumOfDoors)))
             {
                 doorOptions.AppendLine(string.Format($"{(int)numOfDoors}. {numOfDoors.ToString()}"));
@@ -128,6 +129,7 @@ namespace Ex03.GarageLogic
         {
             StringBuilder colorOptions = new StringBuilder();
 
+            colorOptions.AppendLine("Please choose the color: ");
             foreach(eCarColor carColor in Enum.GetValues(typeof(eCarColor)))
             {
                 colorOptions.AppendLine(string.Format($"{(int)carColor}. {carColor.ToString()}"));
@@ -138,7 +140,13 @@ namespace Ex03.GarageLogic
 
         public override string ToString()
         {
-            return string.Format($"{VehicleInformation()}, {CarColor}, {NumOfDoors} "); 
+            StringBuilder carInfo = new StringBuilder();
+
+            carInfo.Append(string.Format("{0}{3}"
+                                         + "The car is {1} and has {2} doors {3}"
+                , base.ToString(), CarColor, NumOfDoors, Environment.NewLine));
+
+            return carInfo.ToString();
         }
     }
 }

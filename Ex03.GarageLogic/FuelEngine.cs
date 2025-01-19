@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Ex03.GarageLogic
 {
-    public class FuelEngine : Engine
+    internal class FuelEngine : Engine
     {
         private float m_RemainingLitersInTank;
         private float m_MaxTankCapacity;
@@ -26,7 +26,7 @@ namespace Ex03.GarageLogic
         public float RemainingLitersInTank
         {
             get { return m_RemainingLitersInTank; }
-            set 
+            private set 
             {
                 if (value < 0 || value > MaxTankCapacity)
                 {
@@ -64,11 +64,11 @@ namespace Ex03.GarageLogic
             RemainingLitersInTank = parsedRemainingLiters;
         }
 
-        internal void Refuel(float i_FuelAmountToFill, eFuelType i_FuelType)
+        internal void Refuel(float i_FuelAmountToFill)
         {
             if (RemainingLitersInTank + i_FuelAmountToFill > MaxTankCapacity || RemainingLitersInTank + i_FuelAmountToFill < 0)
             {
-                throw new ValueOutOfRangeException(0, MaxTankCapacity);
+                throw new ValueOutOfRangeException(0, MaxTankCapacity - RemainingLitersInTank);
             }
 
             RemainingLitersInTank += i_FuelAmountToFill;
@@ -89,6 +89,19 @@ namespace Ex03.GarageLogic
         internal static string GetRemainingLitersInTankPrompt()
         {
             return "Please insert how many liters remain in the tank: ";
+        }
+
+        public override string ToString()
+        {
+            StringBuilder fuelEngineInfo = new StringBuilder();
+
+            fuelEngineInfo.Append(string.Format("{0}"
+                                                + "{1} liters remain in the tank"
+                                                + " out of a total capacity of {2} liters{4}"
+                                                + "Fuel type: {3}{4}"
+                , base.ToString(), RemainingLitersInTank, MaxTankCapacity, FuelType, Environment.NewLine));
+
+            return fuelEngineInfo.ToString();
         }
     }
 }

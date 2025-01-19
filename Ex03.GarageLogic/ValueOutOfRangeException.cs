@@ -20,10 +20,10 @@ namespace Ex03.GarageLogic
         }
 
         public ValueOutOfRangeException(float i_MinValue, float i_MaxValue) : base(
-            string.Format("An error occured while trying to add value not in range between {0} and {1}", i_MinValue, i_MaxValue)) // change the text
+            string.Format("An error occured while trying to add value not in range between {0} and {1}.", i_MinValue, i_MaxValue))
         {
-            m_MinValue = i_MinValue;
-            m_MaxValue = i_MaxValue;
+            MinValue = i_MinValue;
+            MaxValue = i_MaxValue;
         }
     }
 }

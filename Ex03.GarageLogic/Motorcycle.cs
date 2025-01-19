@@ -6,8 +6,6 @@ using static Ex03.GarageLogic.Wheel;
 
 namespace Ex03.GarageLogic
 {
-    // TODO: Check type validation in the Engine Volume;
-    // TODO: Check if it is possible to make the wheels and fuel type abstract methods in the constructor;
     internal class Motorcycle : Vehicle
     {
         private const int k_NumOfWheels = 2;
@@ -31,14 +29,14 @@ namespace Ex03.GarageLogic
             B2
         }
 
-        internal eLicenseType LicenseType
+        private eLicenseType LicenseType
         {
             get { return m_LicenseType; }
             set
             {
                 if (!Enum.IsDefined(typeof(eLicenseType), value))
                 {
-                    throw new ArgumentException("Invalid license type input");
+                    throw new ArgumentException("Invalid license type input.");
                 }
                 
                 m_LicenseType = value;
@@ -56,7 +54,7 @@ namespace Ex03.GarageLogic
                 }
                 else
                 {
-                    throw new ArgumentException($"{GetType().Name}'s engine capacity cannot be negative");
+                    throw new ArgumentException($"{GetType().Name}'s engine capacity cannot be negative.");
                 }
             }
         }
@@ -81,6 +79,7 @@ namespace Ex03.GarageLogic
         {
             StringBuilder licenseTypes = new StringBuilder();
 
+            licenseTypes.AppendLine("Please choose the license type: ");
             foreach(eLicenseType licenseType in Enum.GetValues(typeof(eLicenseType)))
             {
                 licenseTypes.AppendLine(string.Format($"{(int)licenseType}. {licenseType.ToString()}"));
@@ -129,7 +128,14 @@ namespace Ex03.GarageLogic
 
         public override string ToString()
         {
-            return string.Format($"{VehicleInformation()}, {EngineVolume}, {LicenseType}");
+            StringBuilder motorcycleInfo = new StringBuilder();
+
+            motorcycleInfo.Append(string.Format("{0}{4}"
+                                                + "The {1}'s engine volume is {2} CC {4}"
+                                                + "The {1}'s license type is {3}{4}"
+                , base.ToString(), GetType().Name, EngineVolume, LicenseType.ToString(), Environment.NewLine));
+
+            return motorcycleInfo.ToString();
         }
     }
 }

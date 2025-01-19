@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using static Ex03.GarageLogic.Engine;
 
@@ -13,22 +14,21 @@ namespace Ex03.GarageLogic
         private List<Wheel> m_Wheels;
         protected abstract List<eEngineType> SupportedEngineTypes { get; }
         protected abstract Dictionary<eEngineType, float> MaxTankCapacity { get; }
-
         internal abstract Dictionary<string, object> VehicleProperties { get; }
 
-        internal string ModelName
+        private string ModelName
         {
             get { return m_ModelName; }
             set { m_ModelName = value; }
         }
 
-        internal string LicensePlate
+        private string LicensePlate
         {
             get { return m_LicensePlate; }
             set { m_LicensePlate = value; }
         }
 
-        internal float EnergyPercentage
+        private float EnergyPercentage
         {
             get { return m_EnergyPercentage; }
             set
@@ -45,13 +45,13 @@ namespace Ex03.GarageLogic
         internal Engine Engine
         {
             get { return m_Engine; }
-            set { m_Engine = value; }
+            private set { m_Engine = value; }
         }
 
         internal List<Wheel> Wheels
         {
             get { return m_Wheels; }
-            set { m_Wheels = value; }
+            private set { m_Wheels = value; }
         }
 
         internal Vehicle(string i_LicensePlate, string i_VehicleModelName)
@@ -71,7 +71,6 @@ namespace Ex03.GarageLogic
             if (i_EngineType == eEngineType.Fuel)
             {
                Engine = new FuelEngine(MaxTankCapacity[i_EngineType], 0f);
-
             } 
             else
             {
@@ -95,12 +94,26 @@ namespace Ex03.GarageLogic
 
         internal abstract void SetProperty(string i_PropertyName, string i_PropertyValue);
 
-        protected string VehicleInformation()
+        public override string ToString()
         {
-            string vehicleInfo = string.Format(@"License plate: {0}
-Model name: {1}", m_LicensePlate, m_ModelName); // add  owner name + status , wheels information, energy-type and status
+            StringBuilder vehicleInfo = new StringBuilder();
+
+            vehicleInfo.Append(string.Format("{0}'s information: {5}"
+                                             + "==============={5}"
+                                             + "License plate: {1}{5}"
+                                             + "Model name: {2}{5}"
+                                             + "Energy percentage remaining: {3:0.00}%{5}"
+                                             + "{4}{5}"
+                                             + "Wheels information: {5}"
+                                             + "==============={5}"
+                , GetType().Name, LicensePlate, ModelName, EnergyPercentage, Engine, Environment.NewLine));
+
+            foreach (Wheel currentWheel in Wheels)
+            {
+                vehicleInfo.Append(currentWheel);
+            }
             
-            return vehicleInfo;
+            return vehicleInfo.ToString();
         }
     }
 }

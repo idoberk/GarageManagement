@@ -8,7 +8,7 @@ namespace Ex03.ConsoleUI
     {
         private readonly ManageGarage r_GarageManagement = new ManageGarage();
 
-        public enum MenuChoices
+        private enum eMenuChoices
         {
             InsertVehicle = 1,
             DisplayVehicleLicensePlates,
@@ -16,50 +16,83 @@ namespace Ex03.ConsoleUI
             InflateWheelsToMaxAirPressure,
             RefuelTank,
             RechargeBattery,
-            DisplayVehicleInformation
+            DisplayVehicleInformation,
+            Quit
         }
 
-        public void RunProgram()
+        public UserInterface()
         {
-            // createNewVehicle("hello", "Mazda", "Michelin");
-            insertVehicle();
-            // rechargeVehicle();
-            // refuelVehicle();
-            // changeVehicleStatus();
-
-            //printMainMenu();
-
-            //string userInput = getUserInput();
-            //List<string> bla = garage.GetPropertiesValuesFromUser(1);
-            //foreach (string property in bla)
-            //{
-            //    printPrompt("Choose from list");
-            //    printPrompt(property);
-            //    userInput = getUserInput();
-            //}
+            bool programIsRunning = true;
+            string userInput = string.Empty;
 
 
-            //switch (userInput)
-            //{
-            //    case "1":
-            //        insertVehicle();
+            while (programIsRunning)
+            {
+                printMainMenu();
+                userInput = getUserInput();
 
+                try
+                {
+                    int userChoice = int.Parse(userInput);
 
+                    switch ((eMenuChoices)userChoice)
+                    {
+                        case eMenuChoices.InsertVehicle:
+                            insertVehicle();
+                            break;
 
-            //}
+                        case eMenuChoices.DisplayVehicleLicensePlates:
+                            filterVehicles();
+                            break;
+
+                        case eMenuChoices.ChangeStatus:
+                            changeVehicleStatus();
+                            break;
+
+                        case eMenuChoices.InflateWheelsToMaxAirPressure:
+                            inflateWheelsToMax();
+                            break;
+
+                        case eMenuChoices.RefuelTank:
+                            refuelVehicle();
+                            break;
+
+                        case eMenuChoices.RechargeBattery:
+                            rechargeVehicle();
+                            break;
+
+                        case eMenuChoices.DisplayVehicleInformation:
+                            displayVehicleInformation();
+                            break;
+
+                        case eMenuChoices.Quit:
+                            programIsRunning = false;
+                            break;
+
+                        default:
+                            displayInvalidInput();
+                            break;
+                    }
+                } catch(Exception ex)
+                {
+                    displayPrompt(ex.Message);
+                }
+            }
         }
-       
 
         private void printMainMenu()
         {
-            string formatedString = string.Format(@"1. Insert your vehicle.
-2. Display existing vehicles license plates.
-3. Change vehicle status.
-4. Inflate wheels to maximum air pressure.
-5. Refuel tank.
-6. Recharge battery.
-7. Display vehicle information.");
-            Console.WriteLine(formatedString);
+            string menuString = string.Format("1. Insert your vehicle{0}"
+                                              + "2. Display existing vehicles license plates{0}"
+                                              + "3. Change vehicle status{0}"
+                                              + "4. Inflate wheels to maximum air pressure{0}"
+                                              + "5. Refuel tank{0}"
+                                              + "6. Recharge battery{0}"
+                                              + "7. Display vehicle information{0}"
+                                              + "8. Quit{0}"
+                                              + "======================{0}"
+                                              + "Please select what you would like to do: ", Environment.NewLine);
+            displayPrompt(menuString);
         }
 
         private static string getUserInput()
@@ -67,161 +100,153 @@ namespace Ex03.ConsoleUI
             return Console.ReadLine();
         }
 
-        private static void printPrompt(string i_PromptToPrint)
+        private static void displayPrompt(string i_PromptToDisplay)
         {
-            Console.WriteLine(i_PromptToPrint);
+            Console.WriteLine(i_PromptToDisplay.TrimEnd());
         }
 
         private static void displayInvalidInput()
         {
-            printPrompt("Invalid input. Please try again");
+            displayPrompt("Invalid input. Please try again.");
         }
 
         private void insertVehicle()
         {
-            getLicensePlate(out string licensePlateInput);
-            bool isVehicleExists = r_GarageManagement.CheckVehicleExistenceAndUpdateStatus(licensePlateInput, out string message);
+            getLicensePlate(out string vehicleLicensePlateInput);
+            bool isVehicleExists =
+                r_GarageManagement.CheckVehicleExistenceAndUpdateStatus(vehicleLicensePlateInput, out string message);
 
             if (isVehicleExists)
             {
-                printPrompt(message);
+                displayPrompt(message);
             }
             else
             {
-                createNewVehicle(licensePlateInput);
+                createNewVehicle(vehicleLicensePlateInput);
             }
         }
 
-        private void createNewVehicle(string i_LicensePlate)
+        private void createNewVehicle(string i_VehicleLicensePlate)
         {
-            bool IsAddedSuccessfully = false;
+            bool isAddedSuccessfully = false;
 
-            getOwnerInformation(out string ownerName, out string ownerPhoneNumber);
-            getVehicleType(out string vehicleType);
-            getEngineType(out string engineType);
-            getVehicleModelName(out string vehicleModelName);
-            getWheelManufacturerName(out string wheelManufacturerName);
-            getWheelAirPressure(out string tireAirPressure);
-            r_GarageManagement.AddVehicle(vehicleType, engineType, ownerName, ownerPhoneNumber, i_LicensePlate, vehicleModelName, wheelManufacturerName, tireAirPressure);
-            
-            Dictionary<string, object> requiredProperties = r_GarageManagement.GetVehicleProperties(i_LicensePlate);
+            while (!isAddedSuccessfully)
+            {
+                try
+                {
+                    getOwnerInformation(out string ownerName, out string ownerPhoneNumber);
+                    getVehicleType(out string vehicleType);
+                    getEngineType(out string engineType);
+                    getVehicleModelName(out string vehicleModelName);
+                    getWheelManufacturerName(out string wheelManufacturerName);
+                    getWheelAirPressure(out string tireAirPressure);
+                    r_GarageManagement.AddVehicle(vehicleType, engineType, ownerName, ownerPhoneNumber,
+                        i_VehicleLicensePlate, vehicleModelName, wheelManufacturerName, tireAirPressure);
+
+                    Dictionary<string, string> propertyValues = getVehicleProperties(i_VehicleLicensePlate);
+
+                    r_GarageManagement.SetVehicleProperties(i_VehicleLicensePlate, propertyValues);
+                    isAddedSuccessfully = true;
+                }
+                catch (Exception ex)
+                {
+                    displayPrompt(ex.Message);
+                    displayPrompt("Please repeat the process.");
+                }
+            }
+
+            displayPrompt($"Vehicle has been successfully added!");
+        }
+
+        private Dictionary<string, string> getVehicleProperties(string i_VehicleLicensePlate)
+        {
+            Dictionary<string, object> requiredProperties = r_GarageManagement.GetVehicleProperties(i_VehicleLicensePlate);
             Dictionary<string, string> propertyValues = new Dictionary<string, string>();
 
             foreach (KeyValuePair<string, object> property in requiredProperties)
             {
-                getInput((string)property.Value, out string propertyInput);
+                displayPromptAndGetUserInput((string)property.Value, out string propertyInput);
                 propertyValues.Add(property.Key, propertyInput);
             }
 
-            r_GarageManagement.SetVehicleProperties(i_LicensePlate, propertyValues);
+            return propertyValues;
         }
 
-        //private void getVehicleProperties(string i_LicensePlate)
-        //{
-        //    Dictionary<string, object> vehicleProperties = r_GarageManagement.GetVehicleProperties(i_LicensePlate);
-
-        //    if (vehicleProperties.ContainsKey(VehicleFactory.eVehicleProperties.CarColor.ToString()))
-        //    {
-        //        printPrompt("Please select the color of the car: ");
-        //        printPrompt(r_GarageManagement.GetCarColors());
-        //        vehicleProperties[VehicleFactory.eVehicleProperties.CarColor.ToString()] = getUserInput();
-        //    }
-        //}
-
-        private static void getInput(string i_PromptMessage, out string o_ParsedInput)
+        private static void displayPromptAndGetUserInput(string i_PromptMessage, out string o_ParsedInput)
         {
-            printPrompt(i_PromptMessage);
+            displayPrompt(i_PromptMessage);
             o_ParsedInput = getUserInput();
         }
 
-        private void getVehicleEnergyPercentage(out string o_VehicleModelName)
+        private static void getVehicleModelName(out string o_VehicleModelName)
         {
-            getInput("Please enter your vehicle's model name: ", out o_VehicleModelName);
-            //printPrompt("Please enter your vehicle's model name: ");
-            //o_VehicleModelName = getUserInput();
+            displayPromptAndGetUserInput("Please enter your vehicle's model name: ", out o_VehicleModelName);
         }
 
-        private void getVehicleModelName(out string o_VehicleModelName)
+        private static void getWheelManufacturerName(out string o_WheelManufacturerName)
         {
-            getInput("Please enter your vehicle's model name: ", out o_VehicleModelName);
-            //printPrompt("Please enter your vehicle's model name: ");
-            //o_VehicleModelName = getUserInput();
+            displayPromptAndGetUserInput("Please enter your wheel's manufacturer name: ", out o_WheelManufacturerName);
         }
 
-        private void getWheelManufacturerName(out string o_WheelManufacturerName)
+        private static void getWheelAirPressure(out string o_WheelWheelAirPressure)
         {
-            getInput("Please enter your wheel's manufacturer name: ", out o_WheelManufacturerName);
-            //printPrompt("Please enter your wheel's manufacturer name: ");
-            //o_WheelManufacturerName = getUserInput();
+            displayPromptAndGetUserInput("Please enter your wheel's air pressure: ", out o_WheelWheelAirPressure);
         }
 
-        private void getWheelAirPressure(out string o_WheelWheelAirPressure)
+        private static void getLicensePlate(out string o_VehicleLicensePlateInput)
         {
-            getInput("Please enter your wheel's air pressure: ", out o_WheelWheelAirPressure);
-            
+            displayPromptAndGetUserInput("Please enter the license plate number: ", out o_VehicleLicensePlateInput);
         }
 
-        private void getLicensePlate(out string o_LicensePlateInput)
+        private static void getOwnerInformation(out string o_OwnerName, out string o_OwnerPhoneNumber)
         {
-            getInput("Please enter the license plate number: ", out o_LicensePlateInput);
-            //printPrompt("Please enter the license plate number: ");
-            //o_LicensePlateInput = getUserInput();
-        }
-
-        private void getOwnerInformation(out string o_OwnerName, out string o_OwnerPhoneNumber)
-        {
-            getInput("Please enter your name: ", out o_OwnerName);
-            getInput("Please enter your phone number: ", out o_OwnerPhoneNumber);
-            //printPrompt("Please enter your name: ");
-            //o_OwnerName = getUserInput();
-
-            //printPrompt("Please enter your phone number: ");
-            //o_OwnerPhoneNumber = getUserInput();
+            displayPromptAndGetUserInput("Please enter your name: ", out o_OwnerName);
+            displayPromptAndGetUserInput("Please enter your phone number: ", out o_OwnerPhoneNumber);
         }
 
         private void getVehicleType(out string o_VehicleType)
         {
-            printPrompt("Please choose your vehicle type: ");
-            printPrompt(r_GarageManagement.GetVehicleTypes());
-            o_VehicleType = getUserInput();
+            displayPrompt("Please choose your vehicle type: ");
+            displayPromptAndGetUserInput(r_GarageManagement.GetVehicleTypes(), out o_VehicleType);
         }
 
         private void getEngineType(out string o_EngineType)
         {
-            printPrompt("Please choose your vehicle's engine type: ");
-            printPrompt(r_GarageManagement.GetEngineTypes());
-            o_EngineType = getUserInput();
+            displayPrompt("Please choose your vehicle's engine type: ");
+            displayPromptAndGetUserInput(r_GarageManagement.GetEngineTypes(), out o_EngineType);
         }
 
         private void filterVehicles()
         {
             bool isInRepair = true, isRepairComplete = true, isRepairPaid = true;
-            string userInput = string.Empty;
             string vehiclesByStatus = string.Empty;
 
-            printPrompt("Would you like to see ALL the vehicles currently in the garage: (Y / N)");
+            displayPrompt("Would you like to see all license plates of vehicles that are currently in the garage: (Y / N)");
             checkIfYorN(out bool isFilterList);
 
             if (!isFilterList)
             {
-                printPrompt("Would you like to see all the vehicles that are currently under 'BeingRepaired' status: (Y / N)");
+                displayPrompt(
+                    "Would you like to see all license plates of vehicles that are currently under 'BeingRepaired' status: (Y / N)");
                 checkIfYorN(out isInRepair);
 
-                printPrompt("Would you like to see all the vehicles that are currently under 'RepairCompleted' status: (Y / N)");
+                displayPrompt(
+                    "Would you like to see all license plates of vehicles that are currently under 'RepairCompleted' status: (Y / N)");
                 checkIfYorN(out isRepairComplete);
 
-                printPrompt("Would you like to see all the vehicles that are currently under 'RepairPaid' status: (Y / N)");
+                displayPrompt(
+                    "Would you like to see all license plates of vehicles that are currently under 'RepairPaid' status: (Y / N)");
                 checkIfYorN(out isRepairPaid);
             }
 
             vehiclesByStatus = r_GarageManagement.GetVehiclesByStatus(isInRepair, isRepairComplete, isRepairPaid);
-            printPrompt(vehiclesByStatus);
+            displayPrompt(vehiclesByStatus);
         }
 
         private static void checkIfYorN(out bool o_IsInputYes)
         {
-            string userInput = string.Empty;
-            
+            string userInput = getUserInput();
+
             while (!userInput.ToUpper().Equals("Y") && !userInput.ToUpper().Equals("N"))
             {
                 displayInvalidInput();
@@ -233,31 +258,41 @@ namespace Ex03.ConsoleUI
 
         private void changeVehicleStatus()
         {
-            getLicensePlate(out string licensePlate);
-            printPrompt("Please choose the new status of the vehicle: ");
-            printPrompt(r_GarageManagement.GetVehicleTreatmentStatusOptions());
-            string desiredStatus = getUserInput();
-            r_GarageManagement.ChangeVehicleStatus(licensePlate, desiredStatus);
+            getLicensePlate(out string vehicleLicensePlate);
+            displayPrompt("Please choose the new status of the vehicle: ");
+            displayPromptAndGetUserInput(r_GarageManagement.GetVehicleTreatmentStatusOptions(), out string desiredStatus);
+            r_GarageManagement.ChangeVehicleStatus(vehicleLicensePlate, desiredStatus);
         }
 
         private void refuelVehicle()
         {
-            getLicensePlate(out string licensePlate);
-            printPrompt("Please choose the type of fuel: ");
-            printPrompt(r_GarageManagement.GetFuelTypes());
-            string selectedFuelType = getUserInput();
-            printPrompt("Please enter the amount of fuel you would like to add: ");
-            string amountOfFuel = getUserInput();
-            r_GarageManagement.RefuelTank(licensePlate, selectedFuelType, amountOfFuel);
-
+            getLicensePlate(out string vehicleLicensePlate);
+            displayPrompt("Please choose the type of fuel: ");
+            displayPromptAndGetUserInput(r_GarageManagement.GetFuelTypes(), out string selectedFuelType);
+            displayPromptAndGetUserInput("Please enter the amount of fuel you would like to add: ", out string amountOfFuel);
+            r_GarageManagement.RefuelTank(vehicleLicensePlate, selectedFuelType, amountOfFuel);
         }
 
         private void rechargeVehicle()
         {
-            getLicensePlate(out string licensePlate);
-            printPrompt("Please enter the amount of minutes you would like to charge: ");
-            string minutesToCharge = getUserInput();
-            r_GarageManagement.RechargeBattery(licensePlate, minutesToCharge);
+            getLicensePlate(out string vehicleLicensePlate);
+            displayPromptAndGetUserInput("Please enter the amount of minutes you would like to charge: ", out string minutesToCharge);
+            r_GarageManagement.RechargeBattery(vehicleLicensePlate, minutesToCharge);
+        }
+
+        private void inflateWheelsToMax()
+        {
+            getLicensePlate(out string vehicleLicensePlate);
+            r_GarageManagement.InflateWheelsToMax(vehicleLicensePlate);
+        }
+
+        private void displayVehicleInformation()
+        {
+            getLicensePlate(out string vehicleLicensePlate);
+
+            string vehicleInformation = r_GarageManagement.GetVehicleInformation(vehicleLicensePlate);
+
+            displayPrompt(vehicleInformation);
         }
     }
 }

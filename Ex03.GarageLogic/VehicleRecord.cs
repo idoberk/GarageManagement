@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 
 namespace Ex03.GarageLogic
 {
-    // TODO: Check option of moving eVehicleStatus to a standalone enum file;
     public class VehicleRecord
     {
         private string m_VehicleOwnerName;
@@ -18,28 +18,52 @@ namespace Ex03.GarageLogic
             RepairPaid
         }
 
-        public string VehicleOwnerName
+        private string VehicleOwnerName
         {
             get { return m_VehicleOwnerName; }
-            set { m_VehicleOwnerName = value; }
+            set
+            {
+                if (string.IsNullOrEmpty(value) || !value.All(char.IsLetter))
+                {
+                    throw new ArgumentException($"{value} is an invalid name (must only contain letters and can't be empty).");
+                }
+
+                m_VehicleOwnerName = value;
+            }
         }
 
-        public string PhoneOwner
+        private string PhoneOwner
         {
             get { return m_PhoneOwner; }
-            set { m_PhoneOwner = value; }
+            set
+            {
+                if (value.Length != 10 || !value.All(char.IsDigit))
+                {
+                    throw new ArgumentException($"{value} is an invalid phone number (Must contain only digits and be of length 10).");
+                }
+
+                m_PhoneOwner = value;
+            }
         }
 
         public eVehicleStatus VehicleStatus
         {
             get { return m_VehicleStatus; }
-            set { m_VehicleStatus = value; }
+            set 
+            {
+                if(!Enum.IsDefined(typeof(eVehicleStatus), value))
+                {
+                    throw new ArgumentException($"{value} is an invalid status");
+                }
+
+                m_VehicleStatus = value;
+            }
         }
 
         internal Vehicle Vehicle
         {
             get { return m_Vehicle; }
-            set { m_Vehicle = value; }
+            private set { m_Vehicle = value; }
         }
 
         internal VehicleRecord(Vehicle i_VehicleToAdd, string i_Name, string i_PhoneOwner)
@@ -64,7 +88,16 @@ namespace Ex03.GarageLogic
 
         public override string ToString()
         {
-            return string.Format($"{VehicleOwnerName}, {PhoneOwner}, {VehicleStatus}");
+            StringBuilder vehicleRecordInfo = new StringBuilder();
+
+            vehicleRecordInfo.Append(string.Format("{0}'s owner name: {1}{5}"
+                                            + "Owner's phone number: {2}{5}"
+                                            + "{0}'s status: {3}{5}"
+                                            + "==============={5}"
+                                            + "{4}"
+                , Vehicle.GetType().Name, VehicleOwnerName, PhoneOwner, VehicleStatus, Vehicle, Environment.NewLine)); 
+
+            return vehicleRecordInfo.ToString();
         }
     }
 }
