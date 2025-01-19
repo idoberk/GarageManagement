@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using static Ex03.GarageLogic.Car;
 using static Ex03.GarageLogic.Engine;
-using static Ex03.GarageLogic.Motorcycle;
 using static Ex03.GarageLogic.Wheel;
 
 namespace Ex03.GarageLogic
 {
-    // TODO: Check type validation in the CargoVolume;
     internal class Truck : Vehicle
     {
-        private readonly int r_NumOfWheels = 14;
+        private const int k_NumOfWheels = 14;
         private float m_CargoVolume;
         private bool m_IsCargoCooled;
 
@@ -43,17 +40,17 @@ namespace Ex03.GarageLogic
             set { m_IsCargoCooled = value; }
         }
 
-        internal Truck(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_Engine) 
+        internal Truck(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_EngineType) 
             : base(i_LicensePlate, i_ModelName)
         {
-            for (int i = 0; i < r_NumOfWheels; i++)
+            for (int i = 0; i < k_NumOfWheels; i++)
             {
                 Wheels.Add(new Wheel(i_ManufacturerName, i_CurrentTireAirPressure, (float)eMaxTireAirPressure.Truck));
             }
 
-            InitializeVehicleEngine(i_Engine);
+            InitializeVehicleEngine(i_EngineType);
 
-            if (i_Engine is eEngineType.Fuel)
+            if (i_EngineType is eEngineType.Fuel)
             {
                 ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Soler;
             }
@@ -86,16 +83,16 @@ namespace Ex03.GarageLogic
             IsCargoCooled = isCargoCooled;
         }
 
-        internal override void SetProperty(string i_PropertyName, string i_Value)
+        internal override void SetProperty(string i_PropertyName, string i_PropertyValue)
         {
             switch (i_PropertyName)
             {
                 case nameof(IsCargoCooled):
-                    setIsCargoCooled(i_Value);
+                    setIsCargoCooled(i_PropertyValue);
                     break;
 
                 case nameof(CargoVolume):
-                    setCargoVolume(i_Value);
+                    setCargoVolume(i_PropertyValue);
                     break;
 
                 default:
@@ -103,14 +100,14 @@ namespace Ex03.GarageLogic
             }
         }
 
-        public static string GetCargoVolume()
+        internal static string GetCargoVolumePrompt()
         {
             string cargoVolumePrompt = "Please enter the cargo volume: ";
 
             return cargoVolumePrompt;
         }
 
-        public static string GetCargoCooled()
+        internal static string GetCargoCooledPrompt()
         {
             string cargoCooledPrompt = "Is the cargo cooled: (Y / N) ";
 

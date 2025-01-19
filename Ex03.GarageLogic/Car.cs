@@ -3,21 +3,17 @@ using System.Text;
 using System.Collections.Generic;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
-using static Ex03.GarageLogic.VehicleFactory;
 
 namespace Ex03.GarageLogic
 {
     internal class Car : Vehicle
     {
-        // TODO: FormatException when parsing;
-        // TODO: All validations needs to happen in the logic;
-
-        private readonly int r_NumOfWheels = 5;
+        private const int k_NumOfWheels = 5;
         private eCarColor m_CarColor;
         private eNumOfDoors m_NumOfDoors;
 
-        protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType>
-                                                                               {eEngineType.Fuel, eEngineType.Electric};
+        protected override List<eEngineType> SupportedEngineTypes { get; } = new List<eEngineType> 
+                                                                                 {eEngineType.Fuel, eEngineType.Electric};
 
         protected override Dictionary<eEngineType, float> MaxTankCapacity { get; } = new Dictionary<eEngineType, float>()
         { { eEngineType.Fuel, 52f }, { eEngineType.Electric, 5.4f } };
@@ -69,17 +65,17 @@ namespace Ex03.GarageLogic
             }
         }
 
-        internal Car(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_Engine) :
+        internal Car(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_EngineType) :
             base(i_LicensePlate, i_ModelName)
         {
-            for (int i = 0; i < r_NumOfWheels; i++)
+            for (int i = 0; i < k_NumOfWheels; i++)
             {
                 Wheels.Add(new Wheel(i_ManufacturerName, i_CurrentTireAirPressure, (float)eMaxTireAirPressure.Car));
             }
 
-            InitializeVehicleEngine(i_Engine);
+            InitializeVehicleEngine(i_EngineType);
 
-            if (i_Engine is eEngineType.Fuel)
+            if (i_EngineType is eEngineType.Fuel)
             {
                 ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Octan95;
             }
@@ -99,16 +95,16 @@ namespace Ex03.GarageLogic
             NumOfDoors = (eNumOfDoors)parsedNumOfDoors;
         }
 
-        internal override void SetProperty(string i_PropertyName, string i_Value)
+        internal override void SetProperty(string i_PropertyName, string i_PropertyValue)
         {
             switch (i_PropertyName)
             {
                 case nameof(eCarColor):
-                    setCarColor(i_Value);
+                    setCarColor(i_PropertyValue);
                     break;
 
                 case nameof(eNumOfDoors):
-                    setNumberOfDoors(i_Value);
+                    setNumberOfDoors(i_PropertyValue);
                     break;
 
                 default:

@@ -42,7 +42,7 @@ namespace Ex03.GarageLogic
             get { return m_FuelType; }
             set
             {
-                if (Enum.IsDefined(typeof(eFuelType), value))
+                if (!Enum.IsDefined(typeof(eFuelType), value))
                 {
                     throw new ArgumentException("Invalid fuel type input");
                 }
@@ -50,13 +50,21 @@ namespace Ex03.GarageLogic
                 m_FuelType = value;
             }
         }
-        public FuelEngine(float i_MaxTankCapacity, float i_RemainingLitersInTank)
+
+        internal FuelEngine(float i_MaxTankCapacity, float i_RemainingLitersInTank)
         {
             MaxTankCapacity = i_MaxTankCapacity;
             RemainingLitersInTank = i_RemainingLitersInTank;
         }
 
-        public void Refuel(float i_FuelAmountToFill, eFuelType i_FuelType)
+        internal void SetRemainingLitersInTank(string i_RemainingLiters)
+        {
+            ManageGarage.ParseToFloat(i_RemainingLiters, out float parsedRemainingLiters);
+
+            RemainingLitersInTank = parsedRemainingLiters;
+        }
+
+        internal void Refuel(float i_FuelAmountToFill, eFuelType i_FuelType)
         {
             if (RemainingLitersInTank + i_FuelAmountToFill > MaxTankCapacity || RemainingLitersInTank + i_FuelAmountToFill < 0)
             {
@@ -76,6 +84,11 @@ namespace Ex03.GarageLogic
             }
 
             return fuelTypes.ToString();
+        }
+
+        internal static string GetRemainingLitersInTankPrompt()
+        {
+            return "Please insert how many liters remain in the tank: ";
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Ex03.GarageLogic
         private List<Wheel> m_Wheels;
         protected abstract List<eEngineType> SupportedEngineTypes { get; }
         protected abstract Dictionary<eEngineType, float> MaxTankCapacity { get; }
+
         internal abstract Dictionary<string, object> VehicleProperties { get; }
 
         internal string ModelName
@@ -60,24 +61,24 @@ namespace Ex03.GarageLogic
             Wheels = new List<Wheel>();
         }
 
-        internal void InitializeVehicleEngine(eEngineType i_Engine)
+        internal void InitializeVehicleEngine(eEngineType i_EngineType)
         {
-            if (!SupportedEngineTypes.Contains(i_Engine))
+            if (!SupportedEngineTypes.Contains(i_EngineType))
             {
-                throw new ArgumentException($"{i_Engine} engine is not supported for {GetType().Name}.");
+                throw new ArgumentException($"{i_EngineType} engine is not supported for {GetType().Name}.");
             }
 
-            if (i_Engine == eEngineType.Fuel)
+            if (i_EngineType == eEngineType.Fuel)
             {
-               Engine = new FuelEngine(MaxTankCapacity[i_Engine], 0f);
+               Engine = new FuelEngine(MaxTankCapacity[i_EngineType], 0f);
 
             } 
             else
             {
-                Engine = new ElectricEngine(MaxTankCapacity[i_Engine], 0f);
+                Engine = new ElectricEngine(MaxTankCapacity[i_EngineType], 0f);
             }
 
-            Engine.EngineType = i_Engine;
+            Engine.EngineType = i_EngineType;
         }
 
         internal void UpdateEnergyPercentage()
@@ -92,7 +93,7 @@ namespace Ex03.GarageLogic
             }
         }
 
-        internal abstract void SetProperty(string i_PropertyName, string i_Value);
+        internal abstract void SetProperty(string i_PropertyName, string i_PropertyValue);
 
         protected string VehicleInformation()
         {

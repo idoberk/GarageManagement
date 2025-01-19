@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using static Ex03.GarageLogic.Car;
 using System.Text;
+using System.Collections.Generic;
 using static Ex03.GarageLogic.Engine;
 using static Ex03.GarageLogic.Wheel;
 
@@ -11,7 +10,7 @@ namespace Ex03.GarageLogic
     // TODO: Check if it is possible to make the wheels and fuel type abstract methods in the constructor;
     internal class Motorcycle : Vehicle
     {
-        private readonly int r_NumOfWheels = 2;
+        private const int k_NumOfWheels = 2;
         private eLicenseType m_LicenseType;
         private int m_EngineVolume;
 
@@ -26,7 +25,7 @@ namespace Ex03.GarageLogic
 
         public enum eLicenseType
         {
-            A1,
+            A1 = 1,
             A2,
             B1,
             B2
@@ -62,17 +61,17 @@ namespace Ex03.GarageLogic
             }
         }
 
-        internal Motorcycle(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_Engine) 
+        internal Motorcycle(string i_LicensePlate, string i_ModelName, string i_ManufacturerName, float i_CurrentTireAirPressure, eEngineType i_EngineType) 
             : base(i_LicensePlate, i_ModelName)
         {
-            for (int i = 0; i < r_NumOfWheels; i++)
+            for (int i = 0; i < k_NumOfWheels; i++)
             {
                 Wheels.Add(new Wheel(i_ManufacturerName, i_CurrentTireAirPressure, (float)eMaxTireAirPressure.Motorcycle));
             }
 
-            InitializeVehicleEngine(i_Engine);
+            InitializeVehicleEngine(i_EngineType);
 
-            if (i_Engine is eEngineType.Fuel)
+            if (i_EngineType is eEngineType.Fuel)
             {
                 ((FuelEngine)Engine).FuelType = FuelEngine.eFuelType.Octan98;
             }
@@ -90,7 +89,7 @@ namespace Ex03.GarageLogic
             return licenseTypes.ToString();
         }
 
-        internal static string GetEngineVolume()
+        internal static string GetEngineVolumePrompt()
         {
             string engineVolumePrompt = "Please enter the engine volume: (An integer) ";
 
@@ -111,16 +110,16 @@ namespace Ex03.GarageLogic
             EngineVolume = parsedEngineVolume;
         }
 
-        internal override void SetProperty(string i_PropertyName, string i_Value)
+        internal override void SetProperty(string i_PropertyName, string i_PropertyValue)
         {
             switch(i_PropertyName)
             {
                 case nameof(eLicenseType):
-                    setLicenseType(i_Value);
+                    setLicenseType(i_PropertyValue);
                     break;
 
                 case nameof(EngineVolume):
-                    setEngineVolume(i_Value);
+                    setEngineVolume(i_PropertyValue);
                     break;
 
                 default:

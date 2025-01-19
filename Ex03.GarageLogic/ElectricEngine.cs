@@ -1,7 +1,4 @@
-﻿using System;
-using static Ex03.GarageLogic.Wheel;
-
-namespace Ex03.GarageLogic
+﻿namespace Ex03.GarageLogic
 {
     public class ElectricEngine : Engine
     {
@@ -28,13 +25,20 @@ namespace Ex03.GarageLogic
             }
         }
 
-        public ElectricEngine(float i_MaxBatteryCapacity, float i_RemainingHoursInBattery)
+        internal ElectricEngine(float i_MaxBatteryCapacity, float i_RemainingHoursInBattery)
         {
             MaxBatteryCapacity = i_MaxBatteryCapacity;
             RemainingHoursInBattery = i_RemainingHoursInBattery;
         }
 
-        public void Recharge(float i_HoursToCharge)
+        internal void SetRemainingMinutesInBattery(string i_RemainingMinutes)
+        {
+            ManageGarage.ParseToFloat(i_RemainingMinutes, out float parsedRemainingMinutes);
+
+            RemainingHoursInBattery = parsedRemainingMinutes / 60f;
+        }
+
+        internal void Recharge(float i_HoursToCharge)
         {
             if (RemainingHoursInBattery + i_HoursToCharge > MaxBatteryCapacity || RemainingHoursInBattery + i_HoursToCharge < 0)
             {
@@ -42,6 +46,11 @@ namespace Ex03.GarageLogic
             }
 
             RemainingHoursInBattery += i_HoursToCharge;
+        }
+
+        internal static string GetRemainingMinutesInBatteryPrompt()
+        {
+            return "Please insert how many minutes remain for the battery: ";
         }
     }
 }

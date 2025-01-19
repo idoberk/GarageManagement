@@ -18,8 +18,6 @@ namespace Ex03.GarageLogic
         {
             Vehicle vehicle = null;
 
-
-
             switch (i_VehicleType)
             {
                 case eVehicleType.Car:

@@ -10,7 +10,6 @@ namespace Ex03.GarageLogic
 {
     // TODO: Consider try catch in certain places;
     // TODO: Consider refactoring some error messages to include spaces between words;
-    // TODO: Check the parsing method
 
     public class ManageGarage
     {
@@ -60,7 +59,6 @@ namespace Ex03.GarageLogic
                 (eVehicleType)vehicleTypeChoice,
                 (eEngineType)engineTypeChoice);
 
-            
             VehicleRecord newRecord = new VehicleRecord(newVehicle, i_OwnerName, i_OwnerPhoneNumber);
             Records.Add(i_LicensePlate, newRecord);
         }
@@ -69,6 +67,15 @@ namespace Ex03.GarageLogic
         {
             Dictionary<string, object> propertyPrompts = new Dictionary<string, object>();
             Vehicle vehicle = Records[i_LicensePlate].Vehicle;
+
+            if (vehicle.Engine is ElectricEngine)
+            {
+                propertyPrompts.Add("BatteryPercentage", GetRemainingMinutesInBatteryPrompt());
+            }
+            else if (vehicle.Engine is FuelEngine)
+            {
+                propertyPrompts.Add("CurrentFuel", GetRemainingLitersInTankPrompt());
+            }
 
             foreach (KeyValuePair<string, object> property in vehicle.VehicleProperties)
             {
@@ -87,15 +94,15 @@ namespace Ex03.GarageLogic
                         break;
 
                     case nameof(Motorcycle.EngineVolume):
-                        propertyPrompts.Add(property.Key, GetEngineVolume());
+                        propertyPrompts.Add(property.Key, GetEngineVolumePrompt());
                         break;
 
                     case nameof(Truck.CargoVolume):
-                        propertyPrompts.Add(property.Key, GetCargoVolume());
+                        propertyPrompts.Add(property.Key, GetCargoVolumePrompt());
                         break;
 
                     case nameof(Truck.IsCargoCooled):
-                        propertyPrompts.Add(property.Key, GetCargoCooled());
+                        propertyPrompts.Add(property.Key, GetCargoCooledPrompt());
                         break;
                 }
             }
@@ -106,12 +113,39 @@ namespace Ex03.GarageLogic
         public void SetVehicleProperties(string i_LicensePlate, Dictionary<string, string> i_VehiclePropertiesPrompts)
         {
             Vehicle vehicle = Records[i_LicensePlate].Vehicle;
+            Engine vehicleEngine = vehicle.Engine;
 
             foreach (KeyValuePair<string, string> property in i_VehiclePropertiesPrompts)
             {
-                if (vehicle.VehicleProperties.ContainsKey(property.Key))
+                if (property.Key == "CurrentFuel")
+                {
+                    if (vehicleEngine is FuelEngine fuelEngine)
+                    {
+                        fuelEngine.SetRemainingLitersInTank(property.Value);
+                    }
+                    else
+                    {
+                        throw new Exception(); // TODO: Add exception message
+                    }
+                }
+                else if (property.Key == "BatteryPercentage")
+                {
+                    if(vehicleEngine is ElectricEngine electricEngine)
+                    {
+                        electricEngine.SetRemainingMinutesInBattery(property.Value);
+                    } 
+                    else
+                    {
+                        throw new Exception(); // TODO: Add exception message
+                    }
+                }
+                else if (vehicle.VehicleProperties.ContainsKey(property.Key))
                 {
                     vehicle.SetProperty(property.Key, property.Value);
+                }
+                else
+                {
+                    throw new Exception(); // TODO: Add exception message
                 }
             }
         }
@@ -151,19 +185,29 @@ namespace Ex03.GarageLogic
             return Motorcycle.GetLicenseTypes();
         }
 
-        public static string GetEngineVolume()
+        public static string GetEngineVolumePrompt()
         {
-            return Motorcycle.GetEngineVolume();
+            return Motorcycle.GetEngineVolumePrompt();
         }
 
-        public static string GetCargoVolume()
+        public static string GetCargoVolumePrompt()
         {
-            return Truck.GetCargoVolume();
+            return Truck.GetCargoVolumePrompt();
         }
 
-        public static string GetCargoCooled()
+        public static string GetCargoCooledPrompt()
         {
-            return Truck.GetCargoCooled();
+            return Truck.GetCargoCooledPrompt();
+        }
+
+        public static string GetRemainingMinutesInBatteryPrompt()
+        {
+            return ElectricEngine.GetRemainingMinutesInBatteryPrompt();
+        }
+
+        public static string GetRemainingLitersInTankPrompt()
+        {
+            return FuelEngine.GetRemainingLitersInTankPrompt();
         }
 
         // Section 2.
@@ -264,15 +308,8 @@ namespace Ex03.GarageLogic
         // Section 5.
         public void RefuelTank(string i_VehicleLicensePlate, string i_FuelType, string i_AmountOfFuelToAdd)
         {
-            if (!float.TryParse(i_AmountOfFuelToAdd, out float amountOfFuelToAdd))
-            {
-                throw new FormatException($"An error occured when tried parsing {i_AmountOfFuelToAdd}");
-            }
-
-            if (!int.TryParse(i_FuelType, out int fuelType))
-            {
-                throw new FormatException($"An error occured when tried parsing {i_FuelType}");
-            }
+            ParseToFloat(i_AmountOfFuelToAdd, out float amountOfFuelToAdd);
+            ParseToInteger(i_FuelType, out int fuelType);
 
             if (isVehicleExists(i_VehicleLicensePlate))
             {
@@ -299,10 +336,7 @@ namespace Ex03.GarageLogic
         // Section 6.
         public void RechargeBattery(string i_VehicleLicensePlate, string i_MinutesOfBatteryToCharge)
         {
-            if (!float.TryParse(i_MinutesOfBatteryToCharge, out float minutesOfBatteryToCharge))
-            {
-                throw new FormatException($"An error occured when tried parsing {i_MinutesOfBatteryToCharge}");
-            }
+            ParseToFloat(i_MinutesOfBatteryToCharge, out float minutesOfBatteryToCharge);
 
             if (isVehicleExists(i_VehicleLicensePlate))
             {

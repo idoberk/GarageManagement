@@ -4,7 +4,6 @@ using Ex03.GarageLogic;
 
 namespace Ex03.ConsoleUI
 {
-    // TODO: Remove parsing in the UI and do it in the ManageGarage;
     public class UserInterface
     {
         private readonly ManageGarage r_GarageManagement = new ManageGarage();
@@ -63,82 +62,17 @@ namespace Ex03.ConsoleUI
             Console.WriteLine(formatedString);
         }
 
-        private string getUserInput()
+        private static string getUserInput()
         {
             return Console.ReadLine();
         }
 
-        private void printPrompt(string i_PromptToPrint)
+        private static void printPrompt(string i_PromptToPrint)
         {
             Console.WriteLine(i_PromptToPrint);
         }
 
-        //private int getLicenseType()
-        //{
-        //    eLicenseType licenseTypes = new eLicenseType();
-
-        //    string[] list = (string[])Enum.GetNames(typeof(eLicenseType));
-        //    printPrompt("Please choose your license type: ");
-
-        //    bool isValidInput = false;
-        //    int userChoice = 0;
-
-
-        //    while (!isValidInput)
-        //    {
-        //        string userInput = getUserInput();
-        //        isValidInput = Enum.IsDefined(typeof(eLicenseType), userInput);
-        //        isValidInput = int.TryParse(userInput, out userChoice);
-        //        if (!isValidInput)
-        //        {   
-        //            displayInvalidInput();
-        //        }
-        //    }
-            
-        //    return userChoice;
-        //}
-
-        private float getCargoCapacity()
-        {
-            printPrompt("Please enter the cargo volume capacity: ");
-            bool isValidInput = false; 
-            float cargoVolume = 0;
-
-            while (!isValidInput) 
-            {
-                string cargoVolumeInput = getUserInput();
-                isValidInput = float.TryParse(cargoVolumeInput, out cargoVolume);
-
-                if (!isValidInput)
-                {
-                    displayInvalidInput();
-                }
-            }
-
-            return cargoVolume;
-        }
-
-        private int getEngineVolume()
-        {
-            printPrompt("Please enter the engine's volume: ");
-            bool isValidInput = false;
-            int engineVolume = 0;
-
-            while (!isValidInput)
-            {
-                string engineVolumeInput = getUserInput();
-                isValidInput = int.TryParse(engineVolumeInput, out engineVolume);
-
-                if (!isValidInput)
-                {
-                    displayInvalidInput();
-                }
-            }
-
-            return engineVolume;
-        }
-
-        private void displayInvalidInput()
+        private static void displayInvalidInput()
         {
             printPrompt("Invalid input. Please try again");
         }
@@ -160,6 +94,8 @@ namespace Ex03.ConsoleUI
 
         private void createNewVehicle(string i_LicensePlate)
         {
+            bool IsAddedSuccessfully = false;
+
             getOwnerInformation(out string ownerName, out string ownerPhoneNumber);
             getVehicleType(out string vehicleType);
             getEngineType(out string engineType);
@@ -167,7 +103,7 @@ namespace Ex03.ConsoleUI
             getWheelManufacturerName(out string wheelManufacturerName);
             getWheelAirPressure(out string tireAirPressure);
             r_GarageManagement.AddVehicle(vehicleType, engineType, ownerName, ownerPhoneNumber, i_LicensePlate, vehicleModelName, wheelManufacturerName, tireAirPressure);
-
+            
             Dictionary<string, object> requiredProperties = r_GarageManagement.GetVehicleProperties(i_LicensePlate);
             Dictionary<string, string> propertyValues = new Dictionary<string, string>();
 
@@ -192,13 +128,13 @@ namespace Ex03.ConsoleUI
         //    }
         //}
 
-        private void getInput(string i_PromptMessage, out string o_ParsedInput)
+        private static void getInput(string i_PromptMessage, out string o_ParsedInput)
         {
             printPrompt(i_PromptMessage);
             o_ParsedInput = getUserInput();
         }
 
-        private void getVehicleEnergyPrecentage(out string o_VehicleModelName)
+        private void getVehicleEnergyPercentage(out string o_VehicleModelName)
         {
             getInput("Please enter your vehicle's model name: ", out o_VehicleModelName);
             //printPrompt("Please enter your vehicle's model name: ");
@@ -282,7 +218,7 @@ namespace Ex03.ConsoleUI
             printPrompt(vehiclesByStatus);
         }
 
-        private void checkIfYorN(out bool o_IsInputYes)
+        private static void checkIfYorN(out bool o_IsInputYes)
         {
             string userInput = string.Empty;
             
